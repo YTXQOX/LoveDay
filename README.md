@@ -7,6 +7,6 @@
   
 
 
-![image](https://github.com/TEENSTITAN/LoveDay/master/image/main.jpg)
-![image](https://github.com/TEENSTITAN/LoveDay/master/image/edit.jpg)
-![image](https://github.com/TEENSTITAN/LoveDay/master/image/detail.jpg)
+![image](https://github.com/TEENSTITAN/LoveDay/image/main.jpg)
+![image](https://github.com/TEENSTITAN/LoveDay/image/edit.jpg)
+![image](https://github.com/TEENSTITAN/LoveDay/image/detail.jpg)
