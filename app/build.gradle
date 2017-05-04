@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'org.greenrobot.greendao'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.ljstudio.android.loveday"
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 5
+        versionName "1.0.5"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+greendao {
+    schemaVersion 1
+    daoPackage 'cn.ljstudio.android.loveday.greendao'
+    targetGenDir 'src/main/java'
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
+    compile 'org.greenrobot:greendao:3.2.2'
+
+    compile 'com.yqritc:recyclerview-flexibledivider:1.4.0'
+    compile 'com.readystatesoftware.systembartint:systembartint:1.0.4'
+
+    compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
+
+    compile 'org.greenrobot:eventbus:3.0.0'
+
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="com.ljstudio.android.loveday.activity.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/id_main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.ljstudio.android.loveday.views.LabelView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundColor="@color/colorRed"
+            app:direction="leftTop"
+            app:labelTopPadding="10dp"
+            app:num=""
+            app:numSize="12sp"
+            app:numStyle="normal"
+            app:text="HOT"
+            app:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:paddingLeft="16dp">
+
+            <TextView
+                android:id="@+id/id_main_top_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="520"
+                android:textColor="@color/colorGray"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/id_main_top_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="520"
+                android:textColor="@color/colorGrayLight"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+
+            android:paddingRight="16dp">
+
+            <TextView
+                android:id="@+id/id_main_top_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="520"
+                android:textColor="@color/colorAccent"
+                android:textSize="60dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/id_main_top_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:text="Days"
+                android:textColor="@color/colorAccent"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrayLight"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/id_main_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp" />
+</LinearLayout>
