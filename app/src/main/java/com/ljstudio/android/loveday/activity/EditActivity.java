@@ -1,5 +1,6 @@
 package com.ljstudio.android.loveday.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.ljstudio.android.loveday.MyApplication;
@@ -24,16 +26,20 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ljstudio.android.loveday.greendao.DaysDataDao;
+import es.dmoral.toasty.Toasty;
 
 public class EditActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     public static final String DATE_PICKER_TAG = "date_picker";
+    public static final String EDIT_TYPE = "edit_type";
+    public static final String ID = "id";
 
     @BindView(R.id.id_edit_toolbar)
     Toolbar toolbar;
@@ -44,9 +50,13 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
     @BindView(R.id.id_days_edit_save)
     Button tvSave;
 
+    private int mEditType;
+
     private DatePickerDialog datePickerDialog;
     private String strEventTitle;
     private String strEventDate;
+
+    private DaysData daysData;
 
 
     @Override
@@ -70,11 +80,42 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
 
         setStatusBar(ContextCompat.getColor(this, R.color.colorPrimary));
 
-        tvTime.setText(DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate1));
+//        Toasty.Config.getInstance()
+//                .setErrorColor(getResources().getColor(R.color.colorRed)) // optional
+//                .setInfoColor(getResources().getColor(R.color.colorGreen)) // optional
+//                .setSuccessColor(getResources().getColor(R.color.colorBlue)) // optional
+//                .setWarningColor(getResources().getColor(R.color.colorBlue)) // optional
+//                .setTextColor(getResources().getColor(R.color.colorBlue)) // optional
+//                .tintIcon(false) // optional (apply textColor also to the icon)
+//                .setToastTypeface(Typeface.DEFAULT) // optional
+//                .apply(); // required
 
-        Calendar calendar = Calendar.getInstance();
+        /**
+         * 200 新建
+         * 400 修改
+         */
+        mEditType = getIntent().getIntExtra(EDIT_TYPE, 200);
+        if (200 == mEditType) {
+            toolbar.setTitle("新增时光の记忆");
+            tvTime.setText(DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate1));
+            Calendar calendar = Calendar.getInstance();
+            datePickerDialog = DatePickerDialog.newInstance(EditActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
 
-        datePickerDialog = DatePickerDialog.newInstance(EditActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
+        } else if (400 == mEditType) {
+            Long id = getIntent().getLongExtra(ID, -1);
+            daysData = readOne4DB(id).get(0);
+
+            toolbar.setTitle("修改时光の记忆");
+            tvTitle.setText(daysData.getTitle());
+            tvTitle.setSelection(daysData.getTitle().length());
+            tvTime.setText(daysData.getDate());
+
+            Calendar calendar = Calendar.getInstance();
+            Date date = DateFormatUtil.convertStr2Date(daysData.getDate(), DateFormatUtil.sdfDate1);
+            calendar.setTime(date);
+            datePickerDialog = DatePickerDialog.newInstance(EditActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
+        }
+
     }
 
     @OnClick(R.id.id_days_edit_date_text)
@@ -88,6 +129,8 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
     @OnClick(R.id.id_days_edit_save)
     public void saveEvent(View view) {
         strEventTitle = tvTitle.getText().toString().trim();
+        strEventDate = tvTime.getText().toString().trim();
+
         if (TextUtils.isEmpty(strEventTitle)) {
             ToastUtil.showToast(EditActivity.this, "请填写事件");
             return;
@@ -99,6 +142,10 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
         data.setDays("1");
         data.setUnit("天");
         data.setIsTop(false);
+
+        if (400 == mEditType) {
+            deleteOne4DB(daysData.getId());
+        }
         writeOne2DB(data);
     }
 
@@ -107,11 +154,22 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
             MyApplication.getDaoSession(this).runInTx(new Runnable() {
                 @Override
                 public void run() {
-                    MyApplication.getDaoSession(EditActivity.this).getDaysDataDao().insertOrReplace(data);
+                    long id = MyApplication.getDaoSession(EditActivity.this).getDaysDataDao().insertOrReplace(data);
 
                     EventBus.getDefault().post(new MessageEvent(200));
 
-                    ToastUtil.showToast(EditActivity.this, "添加成功");
+                    if (400 == mEditType) {
+//                        ToastUtil.showToast(EditActivity.this, "修改成功");
+                        Toasty.success(EditActivity.this, "修改成功", Toast.LENGTH_SHORT, true).show();
+
+                        Intent intent = new Intent();
+                        intent.putExtra(DetailActivity.RESULT_ID, id);
+                        setResult(RESULT_OK, intent);
+                    } else {
+//                        ToastUtil.showToast(EditActivity.this, "添加成功");
+                        Toasty.success(EditActivity.this, "添加成功", Toast.LENGTH_SHORT, true).show();
+                    }
+
                     EditActivity.this.finish();
                 }
             });
@@ -120,18 +178,25 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
         }
     }
 
-    private void readOne4DB(Long id) {
+    private List<DaysData> readOne4DB(Long id) {
         final DaysDataDao dao = MyApplication.getDaoSession(this).getDaysDataDao();
         List<DaysData> list = dao.queryBuilder()
                 .where(DaysDataDao.Properties.Id.eq(id))
                 .orderAsc(DaysDataDao.Properties.Id)
                 .build().list();
+
+        return list;
+    }
+
+    private void deleteOne4DB(Long id) {
+        final DaysDataDao dao = MyApplication.getDaoSession(this).getDaysDataDao();
+        dao.deleteByKeyInTx(id);
     }
 
     @Override
     public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-        strEventDate = year + "-" + ((month + 1) < 10 ? "0" + (month + 1) : (month + 1)) + "-" + (day < 10 ? "0" + day : day);
-        tvTime.setText(strEventDate);
+        String strDate = year + "-" + ((month + 1) < 10 ? "0" + (month + 1) : (month + 1)) + "-" + (day < 10 ? "0" + day : day);
+        tvTime.setText(strDate);
     }
 
     private void setStatusBar(int color) {

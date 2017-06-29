@@ -3,6 +3,7 @@ package com.ljstudio.android.loveday.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,9 +13,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.github.lzyzsd.randomcolor.RandomColor;
 import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
 import com.ljstudio.android.loveday.adapter.DaysAdapter;
@@ -25,8 +30,8 @@ import com.ljstudio.android.loveday.eventbus.MessageEvent;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.DateUtil;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
-import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
+import com.ljstudio.android.loveday.views.LabelView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -41,11 +46,17 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ljstudio.android.loveday.greendao.DaysDataDao;
+import cn.nekocode.triangulation.TriangulationDrawable;
+import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.id_main_toolbar)
     Toolbar toolbar;
+    @BindView(R.id.id_main_top_layout)
+    RelativeLayout layoutTop;
+    @BindView(R.id.id_main_top_hot)
+    LabelView labelView;
     @BindView(R.id.id_main_top_title)
     TextView tvTopTitle;
     @BindView(R.id.id_main_top_date)
@@ -60,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
     private DaysAdapter daysAdapter;
     private QuickDaysAdapter quickDaysAdapter;
     private List<DaysData> listDays = new ArrayList<>();
+
+    private TriangulationDrawable triangulationDrawable;
+    private boolean isColorfulBg;
 
 
     @Override
@@ -76,13 +90,46 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
 
-        setStatusBar(ContextCompat.getColor(this, R.color.colorPrimary));
+        labelView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showEasterEgg();
+            }
+        });
 
-        if(checkIfFirst()) {
+        if (checkIfFirst()) {
             testData();
         } else {
             resetData();
         }
+
+        refreshUI();
+    }
+
+    private void refreshUI() {
+        RandomColor randomColor = new RandomColor();
+        int color = randomColor.randomColor(0, RandomColor.SaturationType.RANDOM, RandomColor.Luminosity.RANDOM);
+
+        isColorfulBg = PreferencesUtil.getPrefBoolean(MainActivity.this, Constant.COLORFUL_BG, false);
+        if (isColorfulBg) {
+            setStatusBar(color);
+            toolbar.setBackgroundColor(color);
+
+//            triangulationDrawable = new TriangulationDrawable(0xbbfbfbfb);
+            triangulationDrawable = new TriangulationDrawable(color);
+            findViewById(android.R.id.content).setBackground(triangulationDrawable);
+
+            tvTopTitle.setTextColor(ContextCompat.getColor(this, R.color.colorWhite));
+        } else {
+            setStatusBar(ContextCompat.getColor(this, R.color.colorPrimary));
+            toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+
+            findViewById(android.R.id.content).setBackgroundColor(ContextCompat.getColor(this, R.color.colorWhite));
+
+            tvTopTitle.setTextColor(ContextCompat.getColor(this, R.color.colorGray));
+        }
+
+        quickDaysAdapter.notifyDataSetChanged();
     }
 
     private void initListData() {
@@ -112,12 +159,22 @@ public class MainActivity extends AppCompatActivity {
         DaysData data = listDays.get(0);
 
         tvTopTitle.setText(data.getTitle());
-        tvTopDate.setText("起始日：" + data.getDate());
 
         Date date = DateFormatUtil.convertStr2Date(data.getDate(), DateFormatUtil.sdfDate1);
+        if (1 == DateUtil.compareDate(date, new Date())) {
+            tvTopDate.setText("目标日：" + data.getDate());
+
+            tvTopDays.setTextColor(getResources().getColor(R.color.colorBlue));
+            tvTopUnit.setTextColor(getResources().getColor(R.color.colorBlue));
+        } else {
+            tvTopDate.setText("起始日：" + data.getDate());
+
+            tvTopDays.setTextColor(getResources().getColor(R.color.colorAccent));
+            tvTopUnit.setTextColor(getResources().getColor(R.color.colorAccent));
+        }
+
         int days = DateUtil.betweenDays(date, new Date());
         tvTopDays.setText(String.valueOf(days));
-
         tvTopUnit.setText(data.getUnit());
     }
 
@@ -190,10 +247,30 @@ public class MainActivity extends AppCompatActivity {
     private void resetData() {
         listDays.clear();
         listDays = readAll4DB();
-        SystemOutUtil.sysOut("listDays.size()-->" + listDays.size());
+        if (listDays == null || listDays.size() == 0) {
+            testData();
+
+            Toasty.info(MainActivity.this, "无数据，已为您恢复默认数据").show();
+        }
+//        SystemOutUtil.sysOut("listDays.size()-->" + listDays.size());
 
         initTopData();
         initListData();
+    }
+
+    private void showEasterEgg() {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this);
+        builder.title("我是彩蛋");
+        builder.content("我是倒数日，又叫恋时光，专门为胖胖打造，记录时光，记录美");
+        builder.positiveText("确定");
+        builder.onPositive(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.build().show();
     }
 
     @Override
@@ -213,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.id_action_add) {
                 Intent intent = new Intent();
+                intent.putExtra(EditActivity.EDIT_TYPE, 200);
                 intent.setClass(MainActivity.this, EditActivity.class);
                 startActivity(intent);
             } else if (id == R.id.id_action_output) {
@@ -237,6 +315,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void setIsInstall() {
         PreferencesUtil.setPrefBoolean(this, Constant.IS_FIRST, false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (isColorfulBg) {
+            triangulationDrawable.start();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        if (isColorfulBg) {
+            triangulationDrawable.stop();
+        }
+        super.onStop();
     }
 
     @Override

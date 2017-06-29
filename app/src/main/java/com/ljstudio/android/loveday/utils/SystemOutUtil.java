@@ -5,7 +5,7 @@ public class SystemOutUtil {
 
 //	private final static boolean isRelease = true;
 	private final static boolean isRelease = false;
-	private final static String APPLICATION_TAG = "HESVIT_WORK---->";
+	private final static String APPLICATION_TAG = "LOVELY_DAY---->";
 	
 	
 	public static void sysOut(Object object) {

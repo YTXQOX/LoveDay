@@ -4,8 +4,9 @@
     <color name="colorPrimaryDark">#0b6fd9</color>
     <color name="colorAccent">#f44a84</color>
 
-    <color name="colorGray">#636263</color>
+    <color name="colorGray">#636363</color>
     <color name="colorGrayLight">#c2c2c2</color>
+    <color name="colorGrayLighter">#eaeaea</color>
 
     <color name="colorWhite">#ffffff</color>
 
@@ -13,5 +14,10 @@
 
     <color name="colorBlue">#2986e9</color>
     <color name="colorBlueDark">#0b6fd9</color>
+
+    <color name="colorGreen">#10cc13</color>
+    <color name="colorGreenDark">#0ca30e</color>
+
+    <color name="test">#bbfbfbfb</color>
 
 </resources>

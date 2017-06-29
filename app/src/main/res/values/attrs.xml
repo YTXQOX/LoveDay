@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <declare-styleable name="LabelTextView">
 
         <attr name="backgroundColor" format="color" />
@@ -35,4 +36,12 @@
         </attr>
 
     </declare-styleable>
+
+    <declare-styleable name="FallingView">
+        <attr name="flakeSrc" format="reference" />
+        <attr name="flakeScale" format="integer" />
+        <attr name="flakeDensity" format="integer" />
+        <attr name="fallingDelay" format="integer" />
+    </declare-styleable>
+
 </resources>

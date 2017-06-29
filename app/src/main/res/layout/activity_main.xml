@@ -15,10 +15,12 @@
         android:background="?attr/colorPrimary" />
 
     <RelativeLayout
+        android:id="@+id/id_main_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.ljstudio.android.loveday.views.LabelView
+            android:id="@+id/id_main_top_hot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:backgroundColor="@color/colorRed"
@@ -42,7 +44,6 @@
                 android:id="@+id/id_main_top_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:text="520"
                 android:textColor="@color/colorGray"
                 android:textSize="20dp" />
@@ -51,7 +52,6 @@
                 android:id="@+id/id_main_top_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:text="520"
                 android:textColor="@color/colorGrayLight"
                 android:textSize="12dp" />
@@ -62,8 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-
-            android:paddingRight="16dp">
+            android:paddingEnd="16dp">
 
             <TextView
                 android:id="@+id/id_main_top_days"
