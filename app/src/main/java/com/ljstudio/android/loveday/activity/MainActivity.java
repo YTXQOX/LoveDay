@@ -97,20 +97,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        isColorfulBg = PreferencesUtil.getPrefBoolean(MainActivity.this, Constant.COLORFUL_BG, false);
+        refreshUI(isColorfulBg);
+
         if (checkIfFirst()) {
             testData();
         } else {
             resetData();
         }
-
-        refreshUI();
     }
 
-    private void refreshUI() {
+    private void refreshUI(boolean isColorful) {
         RandomColor randomColor = new RandomColor();
         int color = randomColor.randomColor(0, RandomColor.SaturationType.RANDOM, RandomColor.Luminosity.RANDOM);
 
-        isColorfulBg = PreferencesUtil.getPrefBoolean(MainActivity.this, Constant.COLORFUL_BG, false);
         if (isColorfulBg) {
             setStatusBar(color);
             toolbar.setBackgroundColor(color);
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             tvTopTitle.setTextColor(ContextCompat.getColor(this, R.color.colorGray));
         }
 
-        quickDaysAdapter.notifyDataSetChanged();
+//        quickDaysAdapter.notifyDataSetChanged();
     }
 
     private void initListData() {
