@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LoveDay</string>
+
+    <string name="easter_egg_content">LoveDay. Record Time, Record Beauty\n\n v1.0 9</string>
 </resources>

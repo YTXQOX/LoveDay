@@ -1,5 +1,6 @@
 package com.ljstudio.android.loveday.activity;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -12,7 +13,9 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +34,7 @@ import com.ljstudio.android.loveday.utils.ScreenShotUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 import com.ljstudio.android.loveday.views.fallingview.FallingView;
+import com.ljstudio.android.loveday.views.fonts.FontsManager;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -63,6 +67,8 @@ public class DetailActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.id_detail_days_title)
     TextView tvTitle;
+    @BindView(R.id.id_detail_days_layout)
+    LinearLayout layoutDays;
     @BindView(R.id.id_detail_days_days)
     TextView tvDays;
     @BindView(R.id.id_detail_days_start)
@@ -116,6 +122,9 @@ public class DetailActivity extends AppCompatActivity {
         int days = DateUtil.betweenDays(date, new Date());
         tvDays.setText(String.valueOf(days));
 
+        FontsManager.initFormAssets(this, "fonts/gtw.ttf");
+        FontsManager.changeFonts(tvDays);
+
         if (1 == DateUtil.compareDate(date, new Date())) {
             tvDays.setTextColor(getResources().getColor(R.color.colorBlue));
             tvStart.setText("目标日：" + daysData.getDate());
@@ -136,6 +145,21 @@ public class DetailActivity extends AppCompatActivity {
 
         int type = getSeason(month);
         setSeasonBg(type);
+        setMonthBg(month);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tvDays.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Animator animator = ViewAnimationUtils.createCircularReveal(tvDays,
+                                tvDays.getWidth() / 2, tvDays.getHeight() / 2, 0, tvDays.getWidth());
+                        animator.setDuration(1500);
+                        animator.start();
+                    }
+                }
+            });
+        }
 
         tvStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -399,6 +423,50 @@ public class DetailActivity extends AppCompatActivity {
             default:
                 bgLayout.setBackgroundResource(R.mipmap.ic_spring);
                 fallingView.setImageResource(R.mipmap.ic_spring_flower);
+                break;
+        }
+    }
+
+    private void setMonthBg(int month) {
+        switch (month) {
+            case 1:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_01);
+                break;
+            case 2:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_02);
+                break;
+            case 3:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_03);
+                break;
+            case 4:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_04);
+                break;
+            case 5:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_05);
+                break;
+            case 6:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_06);
+                break;
+            case 7:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_07);
+                break;
+            case 8:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_08);
+                break;
+            case 9:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_09);
+                break;
+            case 10:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_10);
+                break;
+            case 11:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_11);
+                break;
+            case 12:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_12);
+                break;
+            default:
+                layoutDays.setBackgroundResource(R.mipmap.google_calendar_01);
                 break;
         }
     }

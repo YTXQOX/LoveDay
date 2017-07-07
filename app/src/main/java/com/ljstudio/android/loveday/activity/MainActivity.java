@@ -32,6 +32,7 @@ import com.ljstudio.android.loveday.utils.DateUtil;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 import com.ljstudio.android.loveday.views.LabelView;
+import com.ljstudio.android.loveday.views.fonts.FontsManager;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -90,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
 
+        isColorfulBg = PreferencesUtil.getPrefBoolean(MainActivity.this, Constant.COLORFUL_BG, false);
+        refreshUI(isColorfulBg);
+
         labelView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,14 +101,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        isColorfulBg = PreferencesUtil.getPrefBoolean(MainActivity.this, Constant.COLORFUL_BG, false);
-        refreshUI(isColorfulBg);
-
         if (checkIfFirst()) {
             testData();
         } else {
             resetData();
         }
+
+        FontsManager.initFormAssets(this, "fonts/gtw.ttf");
+        FontsManager.changeFonts(this);
     }
 
     private void refreshUI(boolean isColorful) {
@@ -261,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
     private void showEasterEgg() {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this);
         builder.title("我是彩蛋");
-        builder.content("我是倒数日，又叫恋时光，专门为胖胖打造，记录时光，记录美");
+        builder.content(getString(R.string.easter_egg_content));
         builder.positiveText("确定");
         builder.onPositive(new MaterialDialog.SingleButtonCallback() {
             @Override
