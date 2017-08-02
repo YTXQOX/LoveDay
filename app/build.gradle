@@ -2,28 +2,93 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'org.greenrobot.greendao'
 
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+
     defaultConfig {
         applicationId "com.ljstudio.android.loveday"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 9
-        versionName "1.0.9"
+        versionName rootProject.ext.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+
+    signingConfigs {
         release {
+            storeFile file("../loveday.jks")
+            keyAlias "loveday"
+            storePassword "lj123456"
+            keyPassword "lj123456789"
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+
+            versionNameSuffix "-debug"
             minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+
+            versionNameSuffix "-release"
+            minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                def outputFile = output.outputFile
+                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                    //  apk名称为 LoveDay-V1.0.0_2015-12-31_online.apk
+                    def fileName = "LoveDay-V${versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+                    output.outputFile = new File(outputFile.parent, fileName)
+                }
+            }
+        }
+    }
+
+    productFlavors {
+        atest {
+            manifestPlaceholders = [APK_CHANNEL: "atest"]
+
+            buildConfigField "String", "DOMAIN_ADD", "\"https://offline.domain.com/\""
+            versionName getDebugVersionName()
+        }
+
+        online {
+            manifestPlaceholders = [APK_CHANNEL: "online"]
+
+            buildConfigField "String", "DOMAIN_ADD", "\"https://online.domain.com/\""
+            versionName getReleaseVersionName()
+        }
+
+        admin {
+            manifestPlaceholders = [APK_CHANNEL: "admin"]
+
+            buildConfigField "String", "DOMAIN_ADD", "\"https://admin.domain.com/\""
+            versionName getDebugVersionName()
+        }
+    }
+
+    productFlavors.all {
+        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
     }
 }
 
 greendao {
     schemaVersion 1
-    daoPackage 'cn.ljstudio.android.loveday.greendao'
+    daoPackage 'com.ljstudio.android.loveday.greendao'
     targetGenDir 'src/main/java'
 }
 

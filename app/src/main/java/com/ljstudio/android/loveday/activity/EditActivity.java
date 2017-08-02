@@ -32,7 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.ljstudio.android.loveday.greendao.DaysDataDao;
+import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import es.dmoral.toasty.Toasty;
 
 public class EditActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {

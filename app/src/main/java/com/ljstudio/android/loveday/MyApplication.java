@@ -3,8 +3,8 @@ package com.ljstudio.android.loveday;
 import android.app.Application;
 import android.content.Context;
 
-import cn.ljstudio.android.loveday.greendao.DaoMaster;
-import cn.ljstudio.android.loveday.greendao.DaoSession;
+import com.ljstudio.android.loveday.greendao.DaoMaster;
+import com.ljstudio.android.loveday.greendao.DaoSession;
 
 /**
  * Created by guoren on 2017/5/3 16:24

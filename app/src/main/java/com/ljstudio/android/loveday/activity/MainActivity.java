@@ -27,6 +27,7 @@ import com.ljstudio.android.loveday.adapter.QuickDaysAdapter;
 import com.ljstudio.android.loveday.constants.Constant;
 import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
+import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.DateUtil;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
@@ -46,7 +47,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cn.ljstudio.android.loveday.greendao.DaysDataDao;
 import cn.nekocode.triangulation.TriangulationDrawable;
 import es.dmoral.toasty.Toasty;
 

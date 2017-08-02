@@ -20,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="APK_CHANNEL"
+            android:value="ONLINE" />
+
         <activity android:name=".activity.SplashActivity"/>
         <activity android:name=".activity.DetailActivity"/>
         <activity android:name=".activity.EditActivity"/>

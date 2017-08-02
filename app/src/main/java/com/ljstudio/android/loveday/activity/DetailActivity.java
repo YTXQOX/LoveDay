@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,11 +23,13 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.ljstudio.android.loveday.BuildConfig;
 import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
 import com.ljstudio.android.loveday.constants.Constant;
 import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
+import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.DateUtil;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
@@ -46,7 +49,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cn.ljstudio.android.loveday.greendao.DaysDataDao;
 import cn.nekocode.triangulation.TriangulationDrawable;
 import es.dmoral.toasty.Toasty;
 import io.reactivex.Observable;
@@ -143,6 +145,10 @@ public class DetailActivity extends AppCompatActivity {
         calendar.setTime(date);
         int month = calendar.get(Calendar.MONTH) + 1;
 
+        if (BuildConfig.LOG_DEBUG) {
+            Log.i("DetailActivity", month + "");
+        }
+
         int type = getSeason(month);
         setSeasonBg(type);
         setMonthBg(month);
@@ -154,7 +160,7 @@ public class DetailActivity extends AppCompatActivity {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         Animator animator = ViewAnimationUtils.createCircularReveal(tvDays,
                                 tvDays.getWidth() / 2, tvDays.getHeight() / 2, 0, tvDays.getWidth());
-                        animator.setDuration(1500);
+                        animator.setDuration(2222);
                         animator.start();
                     }
                 }

@@ -24,6 +24,24 @@ allprojects {
     }
 }
 
+ext {
+    versionName = "1.0.9"
+    debugNum = "0712"
+}
+
+def getDebugVersionName() {
+    return String.format("%s.%s", rootProject.ext.versionName, rootProject.ext.debugNum)
+}
+
+def getReleaseVersionName() {
+    return String.format("%s", rootProject.ext.versionName)
+}
+
+static int gitVersionCode() {
+    def count = "git rev-list HEAD --count".execute().text.trim()
+    return count.isInteger() ? count.toInteger() : 0
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
