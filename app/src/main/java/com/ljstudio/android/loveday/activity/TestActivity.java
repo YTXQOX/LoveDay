@@ -13,8 +13,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
+import com.ljstudio.android.loveday.constants.Constant;
 import com.ljstudio.android.loveday.entity.TestData;
 import com.ljstudio.android.loveday.greendao.TestDataDao;
+import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 
@@ -62,7 +64,9 @@ public class TestActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-//        initData();
+        if (checkIsInit()) {
+            initData();
+        }
         initView();
 
         textView1.setOnClickListener(new View.OnClickListener() {
@@ -441,6 +445,8 @@ public class TestActivity extends AppCompatActivity {
 
                         if (size >= data.size()) {
                             ToastUtil.showToast(TestActivity.this, "数据存储成功");
+
+                            setIsInit();
                         }
                     }
 
@@ -500,4 +506,12 @@ public class TestActivity extends AppCompatActivity {
         return list;
     }
 
+    private boolean checkIsInit() {
+        Constant.bIsInit = PreferencesUtil.getPrefBoolean(this, Constant.IS_INIT, true);
+        return Constant.bIsInit;
+    }
+
+    private void setIsInit() {
+        PreferencesUtil.setPrefBoolean(this, Constant.IS_INIT, false);
+    }
 }

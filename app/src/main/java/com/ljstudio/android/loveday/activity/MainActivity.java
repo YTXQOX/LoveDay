@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (checkIfFirst()) {
+        if (checkIsFirst()) {
             testData();
         } else {
             resetData();
@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkIfFirst() {
+    private boolean checkIsFirst() {
         Constant.bIsFirst = PreferencesUtil.getPrefBoolean(this, Constant.IS_FIRST, true);
         return Constant.bIsFirst;
     }

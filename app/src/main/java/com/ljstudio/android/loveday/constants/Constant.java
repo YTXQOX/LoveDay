@@ -10,4 +10,7 @@ public class Constant {
     public static boolean bIsFirst = true;
     public static final String IS_FIRST = "IS_FIRST";
     public static final String COLORFUL_BG = "COLORFUL_BG";
+
+    public static boolean bIsInit = true;
+    public static final String IS_INIT = "IS_INIT";
 }
