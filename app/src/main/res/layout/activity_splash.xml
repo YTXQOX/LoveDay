@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/id_splash_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,6 +8,13 @@
     <com.ljstudio.android.loveday.views.particletextview.view.ParticleTextView
         android:id="@+id/id_splash_particle_text_view"
         android:layout_width="match_parent"
-        android:layout_gravity="center"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_gravity="center" />
+
+    <com.ljstudio.android.loveday.views.fish.FishDrawableView
+        android:id="@+id/id_fish_drawable_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+</RelativeLayout>

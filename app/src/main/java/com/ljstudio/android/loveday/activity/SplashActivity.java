@@ -1,15 +1,15 @@
 package com.ljstudio.android.loveday.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.ljstudio.android.loveday.R;
-import com.ljstudio.android.loveday.views.particletextview.movingstrategy.RandomMovingStrategy;
-import com.ljstudio.android.loveday.views.particletextview.object.ParticleTextViewConfig;
+import com.ljstudio.android.loveday.views.fish.FishDrawableView;
 import com.ljstudio.android.loveday.views.particletextview.view.ParticleTextView;
 
 import java.util.Calendar;
@@ -26,8 +26,10 @@ public class SplashActivity extends AppCompatActivity {
 
     @BindView(R.id.id_splash_particle_text_view)
     ParticleTextView particleTextView;
+    @BindView(R.id.id_fish_drawable_view)
+    FishDrawableView fishDrawableView;
     @BindView((R.id.id_splash_layout))
-    LinearLayout bgLayout;
+    RelativeLayout bgLayout;
 
 
     @Override
@@ -41,28 +43,36 @@ public class SplashActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        RandomMovingStrategy randomMovingStrategy = new RandomMovingStrategy();
-        ParticleTextViewConfig config = new ParticleTextViewConfig.Builder()
-                .setRowStep(8)
-                .setColumnStep(8)
-                .setTargetText(getString(R.string.app_name))
-                .setReleasing(0.2)
-                .setParticleRadius(4)
-                .setMiniDistance(0.1)
-                .setTextSize(180)
+        fishDrawableView.setOnAnimationFinishedListener(new FishDrawableView.OnAnimationFinishedListener() {
+            @Override
+            public void onFinished() {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                SplashActivity.this.finish();
+            }
+        });
+
+//        RandomMovingStrategy randomMovingStrategy = new RandomMovingStrategy();
+//        ParticleTextViewConfig config = new ParticleTextViewConfig.Builder()
+//                .setRowStep(8)
+//                .setColumnStep(8)
+//                .setTargetText(getString(R.string.app_name))
+//                .setReleasing(0.2)
+//                .setParticleRadius(4)
+//                .setMiniDistance(0.1)
+//                .setTextSize(180)
 //                .setDelay(-1L)
-                .setMovingStrategy(randomMovingStrategy)
-                .instance();
-
-        particleTextView.setConfig(config);
-
-        particleTextView.startAnimation();
-
-        if (particleTextView.isAnimationStop()) {
+//                .setMovingStrategy(randomMovingStrategy)
+//                .instance();
+//
+//        particleTextView.setConfig(config);
+//        particleTextView.startAnimation();
+//
+//        if (particleTextView.isAnimationStop()) {
 //            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 //            startActivity(intent);
 //            SplashActivity.this.finish();
-        }
+//        }
 
         Calendar calendar = Calendar.getInstance();
         int month = calendar.get(Calendar.MONTH) + 1;

@@ -97,10 +97,10 @@ public class MainActivity extends AppCompatActivity {
         labelView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                showEasterEgg();
+                showEasterEgg();
 
-                Intent intent = new Intent(MainActivity.this, TestActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(MainActivity.this, TestActivity.class);
+//                startActivity(intent);
             }
         });
 
