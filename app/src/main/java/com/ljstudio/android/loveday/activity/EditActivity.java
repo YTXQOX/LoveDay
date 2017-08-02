@@ -19,6 +19,7 @@ import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
 import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
+import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -32,7 +33,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import es.dmoral.toasty.Toasty;
 
 public class EditActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
@@ -100,7 +100,6 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
             tvTime.setText(DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate1));
             Calendar calendar = Calendar.getInstance();
             datePickerDialog = DatePickerDialog.newInstance(EditActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
-
         } else if (400 == mEditType) {
             Long id = getIntent().getLongExtra(ID, -1);
             daysData = readOne4DB(id).get(0);

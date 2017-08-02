@@ -59,13 +59,6 @@ android {
     }
 
     productFlavors {
-        atest {
-            manifestPlaceholders = [APK_CHANNEL: "atest"]
-
-            buildConfigField "String", "DOMAIN_ADD", "\"https://offline.domain.com/\""
-            versionName getDebugVersionName()
-        }
-
         online {
             manifestPlaceholders = [APK_CHANNEL: "online"]
 
@@ -79,6 +72,13 @@ android {
             buildConfigField "String", "DOMAIN_ADD", "\"https://admin.domain.com/\""
             versionName getDebugVersionName()
         }
+
+        atest {
+            manifestPlaceholders = [APK_CHANNEL: "atest"]
+
+            buildConfigField "String", "DOMAIN_ADD", "\"https://offline.domain.com/\""
+            versionName getDebugVersionName()
+        }
     }
 
     productFlavors.all {
@@ -87,7 +87,7 @@ android {
 }
 
 greendao {
-    schemaVersion 1
+    schemaVersion 2
     daoPackage 'com.ljstudio.android.loveday.greendao'
     targetGenDir 'src/main/java'
 }
@@ -114,6 +114,7 @@ dependencies {
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
 
     compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.google.code.gson:gson:2.8.0'
 
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
     compile 'com.github.nekocode:TriangulationDrawable:1.1'
