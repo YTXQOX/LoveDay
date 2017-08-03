@@ -25,7 +25,7 @@ allprojects {
 }
 
 ext {
-    versionName = "1.0.9"
+    versionName = "1.1.0"
     debugNum = "0802"
 }
 

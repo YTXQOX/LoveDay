@@ -17,4 +17,11 @@
         android:orderInCategory="101"
         android:title="output"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/id_action_recovery"
+        android:icon="@mipmap/ic_action_recovery"
+        android:orderInCategory="102"
+        android:title="recovery"
+        app:showAsAction="ifRoom" />
 </menu>

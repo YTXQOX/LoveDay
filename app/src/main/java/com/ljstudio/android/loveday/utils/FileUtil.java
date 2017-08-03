@@ -174,6 +174,30 @@ public class FileUtil {
         }
     }
 
+    public static boolean deleteFile(File file) {
+        return file != null && (!file.exists() || file.isFile() && file.delete());
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir == null) return false;
+        // 目录不存在返回true
+        if (!dir.exists()) return true;
+        // 不是目录返回false
+        if (!dir.isDirectory()) return false;
+        // 现在文件存在且是文件夹
+        File[] files = dir.listFiles();
+        if (files != null && files.length != 0) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    if (!deleteFile(file)) return false;
+                } else if (file.isDirectory()) {
+                    if (!deleteDir(file)) return false;
+                }
+            }
+        }
+        return dir.delete();
+    }
+
 }
 
 

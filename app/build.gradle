@@ -40,7 +40,7 @@ android {
         release {
             buildConfigField "boolean", "LOG_DEBUG", "false"
 
-            versionNameSuffix "-release"
+//            versionNameSuffix "-release"
             minifyEnabled false
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -115,6 +115,9 @@ dependencies {
 
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.google.code.gson:gson:2.8.0'
+
+    compile 'net.sourceforge.jexcelapi:jxl:2.6.12'  // https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl
+    compile 'com.tapadoo.android:alerter:1.0.4'
 
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
     compile 'com.github.nekocode:TriangulationDrawable:1.1'

@@ -9,12 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -26,21 +28,31 @@ import com.ljstudio.android.loveday.adapter.DaysAdapter;
 import com.ljstudio.android.loveday.adapter.QuickDaysAdapter;
 import com.ljstudio.android.loveday.constants.Constant;
 import com.ljstudio.android.loveday.entity.DaysData;
+import com.ljstudio.android.loveday.entity.ExcelDaysData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.DateUtil;
+import com.ljstudio.android.loveday.utils.FileUtil;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
+import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 import com.ljstudio.android.loveday.views.LabelView;
+import com.ljstudio.android.loveday.views.excel.ExcelManager;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.tapadoo.alerter.Alerter;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +61,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.nekocode.triangulation.TriangulationDrawable;
 import es.dmoral.toasty.Toasty;
+
+import static com.ljstudio.android.loveday.utils.FileUtil.getSDCardFolderPath;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -105,7 +119,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (checkIsFirst()) {
-            testData();
+            File filePath = getSDCardFolderPath("Export");
+            if (!filePath.exists()) {
+                filePath.mkdirs();
+            }
+            File file = new File(filePath.getAbsolutePath(), "LoveDay.xls");
+            if (file.exists()) {
+                SystemOutUtil.sysOut("file.getAbsolutePath()-->" + file.getAbsolutePath());
+
+                onImport(file.getAbsolutePath());
+            } else {
+                testData();
+            }
         } else {
             resetData();
         }
@@ -228,6 +253,19 @@ public class MainActivity extends AppCompatActivity {
                 .build().list();
     }
 
+    private void deleteAll4DB() {
+        try {
+            MyApplication.getDaoSession(this).runInTx(new Runnable() {
+                @Override
+                public void run() {
+                    MyApplication.getDaoSession(MainActivity.this).getDaysDataDao().deleteAll();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private List<DaysData> readAll4DB() {
         final DaysDataDao dao = MyApplication.getDaoSession(this).getDaysDataDao();
         List<DaysData> list = dao.queryBuilder()
@@ -301,12 +339,162 @@ public class MainActivity extends AppCompatActivity {
                 intent.setClass(MainActivity.this, EditActivity.class);
                 startActivity(intent);
             } else if (id == R.id.id_action_output) {
-                ToastUtil.showToast(MainActivity.this, "备份成功");
+                onExport();
+            } else if (id == R.id.id_action_recovery) {
+                File filePath = getSDCardFolderPath("Export");
+                if (!filePath.exists()) {
+                    filePath.mkdirs();
+                }
+                final File file = new File(filePath.getAbsolutePath(), "LoveDay.xls");
+                if (file.exists()) {
+                    MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this);
+                    builder.title("温馨提示");
+                    builder.content("恢复数据后，将清除现有的所有数据，替换为恢复数据");
+                    builder.positiveText("恢复数据");
+                    builder.negativeText("取消");
+                    builder.onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            onImport(file.getAbsolutePath());
+                        }
+                    });
+                    builder.onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    builder.build().show();
+                } else {
+                    Toasty.error(MainActivity.this, "没有备份记录可恢复").show();
+                }
             }
 
             return true;
         }
     };
+
+    private void onImport(String filePath) {
+        try {
+            long t1 = System.currentTimeMillis();
+
+//            AssetManager asset = getAssets();
+//            InputStream excelStream = asset.open("users.xls");
+
+            File file = new File(filePath);
+            FileInputStream fis = new FileInputStream(file);
+
+            ExcelManager excelManager = new ExcelManager();
+            List<ExcelDaysData> list = excelManager.fromExcel(fis, ExcelDaysData.class);
+
+            long t2 = System.currentTimeMillis();
+            double time = (t2 - t1) / 1000.0D;
+//            Toast.makeText(this, "读到Entity个数:" + list.size() + "\n用时:" + time + "秒", Toast.LENGTH_SHORT).show();
+
+            listDays.clear();
+            for (ExcelDaysData excelDaysData1 : list) {
+                DaysData daysData1 = new DaysData();
+                daysData1.setTitle(excelDaysData1.getTitle());
+                daysData1.setDate(excelDaysData1.getDate());
+                daysData1.setDays(excelDaysData1.getDays());
+                daysData1.setUnit(excelDaysData1.getUnit());
+                daysData1.setIsTop(Boolean.valueOf(excelDaysData1.getIsTop()));
+
+                listDays.add(daysData1);
+            }
+
+            deleteAll4DB();
+            writeAll2DB(listDays);
+            resetData();
+        } catch (Exception e) {
+            Toast.makeText(this, "读取备份异常", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    private void onExport() {
+        File file = null;
+        try {
+            long t1 = System.currentTimeMillis();
+
+            List<ExcelDaysData> list = new ArrayList<>();
+            for (DaysData daysData1 : listDays) {
+                ExcelDaysData excelDataEntity1 = new ExcelDaysData();
+                excelDataEntity1.setTitle(daysData1.getTitle());
+                excelDataEntity1.setDate(daysData1.getDate());
+                excelDataEntity1.setDays(daysData1.getDays());
+                excelDataEntity1.setUnit(daysData1.getUnit());
+                excelDataEntity1.setIsTop(String.valueOf(daysData1.getIsTop()));
+
+                list.add(excelDataEntity1);
+            }
+
+            File filePath = getSDCardFolderPath("Export");
+            if (!filePath.exists()) {
+                filePath.mkdirs();
+            }
+
+//            String fileName = DateFormatUtil.getCurrentDateTime(DateFormatUtil.sdfDate60) + "_" +
+//                    DateFormatUtil.getCurrentDateTime(DateFormatUtil.sdfTime40);
+            file = new File(filePath.getAbsolutePath(), "LoveDay.xls");
+            if (file.exists()) {
+                FileUtil.deleteDir(file);
+            }
+
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            String excelFilePath = file.getAbsolutePath();
+            Log.i("excelFilePath-->", excelFilePath);
+
+            ExcelManager excelManager = new ExcelManager();
+            OutputStream excelStream = new FileOutputStream(excelFilePath);
+
+            boolean success = excelManager.toExcel(excelStream, list);
+            long t2 = System.currentTimeMillis();
+
+            //------------
+//            String cachePath = getCacheDir().toString() + "/export";
+//            File dir2 = new File(cachePath);
+//            if (!dir2.exists()) {
+//                dir2.mkdirs();
+//            }
+//            OutputStream cache = new FileOutputStream(cachePath + "/users.xls");
+//            boolean success2 = excelManager.toExcel(cache, users);
+            //------------
+
+            double time = (t2 - t1) / 1000.0D;
+            if (success) {
+                Toast.makeText(this, "备份成功", Toast.LENGTH_SHORT).show();
+            } else {
+//                Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show();
+                Alerter.create(this)
+                        .setText("备份失败")
+                        .setBackgroundColor(R.color.colorAccent)
+                        .setDuration(500)
+                        .show();
+
+                FileUtil.deleteFile(file);
+            }
+        } catch (Exception e) {
+//            Toast.makeText(this, "保存异常", Toast.LENGTH_SHORT).show();
+            Alerter.create(this)
+                    .setText("备份异常")
+                    .setBackgroundColor(R.color.colorAccent)
+                    .setDuration(500)
+                    .show();
+
+            FileUtil.deleteFile(file);
+
+            e.printStackTrace();
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
