@@ -203,7 +203,7 @@ public class FishDrawableView extends RelativeLayout {
                 super.onAnimationEnd(animation);
                 fishDrawable.setWaveFrequence(1f);
 
-                onAnimationFinishedListener.onFinished();
+//                onAnimationFinishedListener.onFinished();
             }
 
             @Override

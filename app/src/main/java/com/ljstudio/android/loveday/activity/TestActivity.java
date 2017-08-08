@@ -1,24 +1,24 @@
 package com.ljstudio.android.loveday.activity;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.TextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
+import com.ljstudio.android.loveday.adapter.TestKeyAdapter;
 import com.ljstudio.android.loveday.constants.Constant;
 import com.ljstudio.android.loveday.entity.TestData;
+import com.ljstudio.android.loveday.entity.TestKeyData;
 import com.ljstudio.android.loveday.greendao.TestDataDao;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by guoren on 2017/5/10 11:07
+ * Created by guoren on 2017/08/07 15:19
  * Usage
  */
 
@@ -40,12 +40,8 @@ public class TestActivity extends AppCompatActivity {
     public static final String VERSION_LIST = "version_list";
     public static final String NODE_LIST = "node_list";
 
-    @BindView((R.id.id_test_text1))
-    TextView textView1;
-    @BindView((R.id.id_test_text2))
-    TextView textView2;
-    @BindView((R.id.id_test_text3))
-    TextView textView3;
+    @BindView((R.id.id_test_recycler_view))
+    RecyclerView recyclerView;
 
     private List<TestData> listItems1 = new ArrayList<>();
     private List<TestData> listItems2 = new ArrayList<>();
@@ -69,84 +65,83 @@ public class TestActivity extends AppCompatActivity {
         }
         initView();
 
-        textView1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<String> list = new ArrayList<>();
-                for (TestData testData : listItems1) {
-                    list.add(testData.getName());
-                }
-                final String[] items = list.toArray(new String[list.size()]);
-
-                Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
-                        setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                textView1.setText(items[which]);
-
-                                value1 = readOne4DB(items[which]).get(0).getValue();
-                                listItems2 = readOne4DB(value1, CLASS_LIST);
-
-                                initVersionView(value1, CLASS_LIST);
-                            }
-                        }).create();
-
-                alertDialog.show();
-            }
-        });
-
-        textView2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<String> list = new ArrayList<>();
-                for (TestData testData : listItems2) {
-                    list.add(testData.getName());
-                }
-                final String[] items = list.toArray(new String[list.size()]);
-
-                Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
-                        setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                textView2.setText(items[which]);
-
-                                value2 = readOne4DB(items[which]).get(0).getValue();
-                                listItems3 = readOne4DB(value2, VERSION_LIST);
-
-                                initNodeView(value2, VERSION_LIST);
-                            }
-                        }).create();
-
-                alertDialog.show();
-            }
-        });
-
-        textView3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<String> list = new ArrayList<>();
-                for (TestData testData : listItems3) {
-                    list.add(testData.getName());
-                }
-                final String[] items = list.toArray(new String[list.size()]);
-
-                Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
-                        setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                textView3.setText(items[which]);
-                            }
-                        }).create();
-
-                alertDialog.show();
-            }
-        });
+//        textView1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                List<String> list = new ArrayList<>();
+//                for (TestData testData : listItems1) {
+//                    list.add(testData.getName());
+//                }
+//                final String[] items = list.toArray(new String[list.size()]);
+//
+//                Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
+//                        setItems(items, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                textView1.setText(items[which]);
+//
+//                                value1 = readOne4DB(items[which]).get(0).getValue();
+//                                listItems2 = readOne4DB(value1, CLASS_LIST);
+//
+//                                initVersionView(value1, CLASS_LIST);
+//                            }
+//                        }).create();
+//
+//                alertDialog.show();
+//            }
+//        });
+//
+//        textView2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                List<String> list = new ArrayList<>();
+//                for (TestData testData : listItems2) {
+//                    list.add(testData.getName());
+//                }
+//                final String[] items = list.toArray(new String[list.size()]);
+//
+//                Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
+//                        setItems(items, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                textView2.setText(items[which]);
+//
+//                                value2 = readOne4DB(items[which]).get(0).getValue();
+//                                listItems3 = readOne4DB(value2, VERSION_LIST);
+//
+//                                initNodeView(value2, VERSION_LIST);
+//                            }
+//                        }).create();
+//
+//                alertDialog.show();
+//            }
+//        });
+//
+//        textView3.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                List<String> list = new ArrayList<>();
+//                for (TestData testData : listItems3) {
+//                    list.add(testData.getName());
+//                }
+//                final String[] items = list.toArray(new String[list.size()]);
+//
+//                Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
+//                        setItems(items, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                textView3.setText(items[which]);
+//                            }
+//                        }).create();
+//
+//                alertDialog.show();
+//            }
+//        });
     }
 
     private void initData() {
-        String str = "{\n" +
-                "    \"result\": {\n" +
-                "        \"extend\": [\n" +
+        String str = "    \"result\": {\n" +
+                "        \"data\": [\n" +
                 "            {\n" +
                 "                \"name\": \"类型\",\n" +
                 "                \"request_key\": \"class_id\",\n" +
@@ -173,24 +168,31 @@ public class TestActivity extends AppCompatActivity {
                 "                \"list_name\": \"num_list\"\n" +
                 "            }\n" +
                 "        ],\n" +
-                "        \"data\": {\n" +
+                "        \"extend\": {\n" +
                 "            \"class_list\": [\n" +
                 "                {\n" +
                 "                    \"value\": \"1\",\n" +
                 "                    \"name\": \"企业网站模板\",\n" +
-                "                    \"fid\": null,\n" +
-                "                    \"father_node\": null,\n" +
+                "                    \"fid\": \"\",\n" +
+                "                    \"father_node\": \"\",\n" +
                 "                    \"recommend\": 1\n" +
                 "                },\n" +
                 "                {\n" +
                 "                    \"value\": \"2\",\n" +
                 "                    \"name\": \"企业定制官网\",\n" +
-                "                    \"fid\": null,\n" +
-                "                    \"father_node\": null,\n" +
+                "                    \"fid\": \"\",\n" +
+                "                    \"father_node\": \"\",\n" +
                 "                    \"recommend\": 0\n" +
                 "                }\n" +
                 "            ],\n" +
                 "            \"version_list\": [\n" +
+                "                {\n" +
+                "                    \"value\": \"尊贵版\",\n" +
+                "                    \"name\": \"尊贵版\",\n" +
+                "                    \"fid\": \"2\",\n" +
+                "                    \"father_node\": \"class_list\",\n" +
+                "                    \"recommend\": 1\n" +
+                "                },\n" +
                 "                {\n" +
                 "                    \"value\": \"创业版\",\n" +
                 "                    \"name\": \"创业版\",\n" +
@@ -199,9 +201,9 @@ public class TestActivity extends AppCompatActivity {
                 "                    \"recommend\": 1\n" +
                 "                },\n" +
                 "                {\n" +
-                "                    \"value\": \"中小企业版\",\n" +
-                "                    \"name\": \"中小企业版\",\n" +
-                "                    \"fid\": \"1\",\n" +
+                "                    \"value\": \"高级版\",\n" +
+                "                    \"name\": \"高级版\",\n" +
+                "                    \"fid\": \"2\",\n" +
                 "                    \"father_node\": \"class_list\",\n" +
                 "                    \"recommend\": 0\n" +
                 "                },\n" +
@@ -213,81 +215,67 @@ public class TestActivity extends AppCompatActivity {
                 "                    \"recommend\": 0\n" +
                 "                },\n" +
                 "                {\n" +
-                "                    \"value\": \"高级版\",\n" +
-                "                    \"name\": \"高级版\",\n" +
-                "                    \"fid\": \"2\",\n" +
+                "                    \"value\": \"中小企业版\",\n" +
+                "                    \"name\": \"中小企业版\",\n" +
+                "                    \"fid\": \"1\",\n" +
                 "                    \"father_node\": \"class_list\",\n" +
                 "                    \"recommend\": 0\n" +
-                "                },\n" +
-                "                {\n" +
-                "                    \"value\": \"尊贵版\",\n" +
-                "                    \"name\": \"尊贵版\",\n" +
-                "                    \"fid\": \"2\",\n" +
-                "                    \"father_node\": \"class_list\",\n" +
-                "                    \"recommend\": 1\n" +
                 "                }\n" +
                 "            ],\n" +
                 "            \"node_list\": [\n" +
                 "                {\n" +
-                "                    \"value\": \"1\",\n" +
+                "                    \"value\": \"3\",\n" +
+                "                    \"name\": \"国外\",\n" +
+                "                    \"fid\": \"尊贵版\",\n" +
+                "                    \"father_node\": \"version_list\",\n" +
+                "                    \"recommend\": 1\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"value\": \"4\",\n" +
                 "                    \"name\": \"国内\",\n" +
                 "                    \"fid\": \"创业版\",\n" +
                 "                    \"father_node\": \"version_list\",\n" +
                 "                    \"recommend\": 1\n" +
                 "                },\n" +
                 "                {\n" +
-                "                    \"value\": \"2\",\n" +
+                "                    \"value\": \"3\",\n" +
+                "                    \"name\": \"国外\",\n" +
+                "                    \"fid\": \"高级版\",\n" +
+                "                    \"father_node\": \"version_list\",\n" +
+                "                    \"recommend\": 1\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"value\": \"4\",\n" +
+                "                    \"name\": \"国内\",\n" +
+                "                    \"fid\": \"标准版\",\n" +
+                "                    \"father_node\": \"version_list\",\n" +
+                "                    \"recommend\": 1\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"value\": \"3\",\n" +
                 "                    \"name\": \"国外\",\n" +
                 "                    \"fid\": \"创业版\",\n" +
                 "                    \"father_node\": \"version_list\",\n" +
                 "                    \"recommend\": 0\n" +
                 "                },\n" +
                 "                {\n" +
-                "                    \"value\": \"1\",\n" +
-                "                    \"name\": \"国内\",\n" +
-                "                    \"fid\": \"中小企业版\",\n" +
-                "                    \"father_node\": \"version_list\",\n" +
-                "                    \"recommend\": 0\n" +
-                "                },\n" +
-                "                {\n" +
-                "                    \"value\": \"2\",\n" +
-                "                    \"name\": \"国外\",\n" +
-                "                    \"fid\": \"中小企业版\",\n" +
-                "                    \"father_node\": \"version_list\",\n" +
-                "                    \"recommend\": 0\n" +
-                "                },\n" +
-                "                {\n" +
-                "                    \"value\": \"1\",\n" +
-                "                    \"name\": \"国内\",\n" +
-                "                    \"fid\": \"标准版\",\n" +
-                "                    \"father_node\": \"version_list\",\n" +
-                "                    \"recommend\": 0\n" +
-                "                },\n" +
-                "                {\n" +
-                "                    \"value\": \"2\",\n" +
-                "                    \"name\": \"国外\",\n" +
-                "                    \"fid\": \"标准版\",\n" +
-                "                    \"father_node\": \"version_list\",\n" +
-                "                    \"recommend\": 0\n" +
-                "                },\n" +
-                "                {\n" +
-                "                    \"value\": \"1\",\n" +
-                "                    \"name\": \"国内\",\n" +
-                "                    \"fid\": \"高级版\",\n" +
-                "                    \"father_node\": \"version_list\",\n" +
-                "                    \"recommend\": 0\n" +
-                "                },\n" +
-                "                {\n" +
-                "                    \"value\": \"1\",\n" +
+                "                    \"value\": \"4\",\n" +
                 "                    \"name\": \"国内\",\n" +
                 "                    \"fid\": \"尊贵版\",\n" +
                 "                    \"father_node\": \"version_list\",\n" +
                 "                    \"recommend\": 0\n" +
                 "                },\n" +
                 "                {\n" +
-                "                    \"value\": \"2\",\n" +
+                "                    \"value\": \"3\",\n" +
                 "                    \"name\": \"国外\",\n" +
-                "                    \"fid\": \"尊贵版\",\n" +
+                "                    \"fid\": \"标准版\",\n" +
+                "                    \"father_node\": \"version_list\",\n" +
+                "                    \"recommend\": 0\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"value\": \"3\",\n" +
+                "                    \"name\": \"国外\",\n" +
+                "                    \"fid\": \"中小企业版\",\n" +
                 "                    \"father_node\": \"version_list\",\n" +
                 "                    \"recommend\": 1\n" +
                 "                }\n" +
@@ -316,29 +304,47 @@ public class TestActivity extends AppCompatActivity {
                 "                9,\n" +
                 "                10\n" +
                 "            ],\n" +
-                "            \"contract_info\": {\n" +
-                "                \"name\": \"服务合同\",\n" +
-                "                \"url\": \"http://www.xmisp.com\"\n" +
-                "            }\n" +
-                "        }\n" +
-                "    },\n" +
-                "    \"code\": \"1000\",\n" +
-                "    \"msg\": \"操作成功\",\n" +
-                "    \"versioninfo\": {\n" +
-                "        \"version\": \"1.0.0\",\n" +
-                "        \"version_int\": \"1000\",\n" +
-                "        \"system\": \"点击网络-建站项目API\",\n" +
-                "        \"link\": \"http://www.dj.cn\"\n" +
-                "    }\n" +
-                "}";
+                "            \"contract_info\": [\n" +
+                "                {\n" +
+                "                    \"name\": \"服务合同\",\n" +
+                "                    \"url\": \"http://czx.jzcloud.xmisp.com/downs/网站建设产品服务合同 （云建站3.0版-未含设计服务）- 电子版.doc\",\n" +
+                "                    \"fid\": \"1\",\n" +
+                "                    \"father_node\": \"class_list\",\n" +
+                "                    \"recommend\": 1\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"name\": \"服务合同\",\n" +
+                "                    \"url\": \"http://czx.jzcloud.xmisp.com/downs/网站建设产品服务合同 （云建站3.0版-含设计服务）- 电子版.doc\",\n" +
+                "                    \"fid\": \"2\",\n" +
+                "                    \"father_node\": \"class_list\",\n" +
+                "                    \"recommend\": 0\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        },\n" +
+                "        \"versioninfo\": {}\n" +
+                "    }";
 
         try {
             JSONObject jsonObject = new JSONObject(str);
-            JSONObject object = jsonObject.optJSONObject("result").optJSONObject("data");
+
+            String strKey = jsonObject.optJSONObject("result").optString("data");
             Gson gson = new Gson();
-            List<TestData> listClass = gson.fromJson(object.optString(CLASS_LIST), new TypeToken<List<TestData>>(){}.getType());
-            List<TestData> listVersion = gson.fromJson(object.optString(VERSION_LIST), new TypeToken<List<TestData>>(){}.getType());
-            List<TestData> listNode = gson.fromJson(object.optString(NODE_LIST), new TypeToken<List<TestData>>(){}.getType());
+            List<TestKeyData> listKey = gson.fromJson(strKey, new TypeToken<List<TestKeyData>>() {
+            }.getType());
+            LinearLayoutManager layoutManager1 = new LinearLayoutManager(TestActivity.this);
+            layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(layoutManager1);
+            recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).build());
+            TestKeyAdapter testKeyAdapter = new TestKeyAdapter(R.layout.layout_test_item, listKey);
+            recyclerView.setAdapter(testKeyAdapter);
+
+            JSONObject object = jsonObject.optJSONObject("result").optJSONObject("extend");
+            List<TestData> listClass = gson.fromJson(object.optString(CLASS_LIST), new TypeToken<List<TestData>>() {
+            }.getType());
+            List<TestData> listVersion = gson.fromJson(object.optString(VERSION_LIST), new TypeToken<List<TestData>>() {
+            }.getType());
+            List<TestData> listNode = gson.fromJson(object.optString(NODE_LIST), new TypeToken<List<TestData>>() {
+            }.getType());
 
             SystemOutUtil.sysOut("listClass.size()-->" + listClass.size());
             SystemOutUtil.sysOut("listVersion.size()-->" + listVersion.size());

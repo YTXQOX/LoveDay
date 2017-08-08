@@ -5,38 +5,8 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/id_test_text1"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/id_test_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="#dddddd"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="类型（class_list）"
-        android:textSize="30dp" />
-
-    <TextView
-        android:id="@+id/id_test_text2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="8dp"
-        android:background="#dddddd"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="版本（version_list）"
-        android:textSize="30dp" />
-
-    <TextView
-        android:id="@+id/id_test_text3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="8dp"
-        android:background="#dddddd"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="节点（node_list）"
-        android:textSize="30dp" />
+        android:layout_height="match_parent"/>
 </LinearLayout>
