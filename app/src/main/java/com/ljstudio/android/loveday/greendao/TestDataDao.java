@@ -25,11 +25,12 @@ public class TestDataDao extends AbstractDao<TestData, Long> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Value = new Property(1, String.class, "value", false, "VALUE");
-        public final static Property Name = new Property(2, String.class, "name", false, "NAME");
-        public final static Property Fid = new Property(3, String.class, "fid", false, "FID");
-        public final static Property Father_node = new Property(4, String.class, "father_node", false, "FATHER_NODE");
-        public final static Property Recommend = new Property(5, String.class, "recommend", false, "RECOMMEND");
+        public final static Property List_name = new Property(1, String.class, "list_name", false, "LIST_NAME");
+        public final static Property Value = new Property(2, String.class, "value", false, "VALUE");
+        public final static Property Name = new Property(3, String.class, "name", false, "NAME");
+        public final static Property Fid = new Property(4, String.class, "fid", false, "FID");
+        public final static Property Father_node = new Property(5, String.class, "father_node", false, "FATHER_NODE");
+        public final static Property Recommend = new Property(6, String.class, "recommend", false, "RECOMMEND");
     }
 
 
@@ -46,11 +47,12 @@ public class TestDataDao extends AbstractDao<TestData, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"TEST_DATA\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"VALUE\" TEXT," + // 1: value
-                "\"NAME\" TEXT," + // 2: name
-                "\"FID\" TEXT," + // 3: fid
-                "\"FATHER_NODE\" TEXT," + // 4: father_node
-                "\"RECOMMEND\" TEXT);"); // 5: recommend
+                "\"LIST_NAME\" TEXT," + // 1: list_name
+                "\"VALUE\" TEXT," + // 2: value
+                "\"NAME\" TEXT," + // 3: name
+                "\"FID\" TEXT," + // 4: fid
+                "\"FATHER_NODE\" TEXT," + // 5: father_node
+                "\"RECOMMEND\" TEXT);"); // 6: recommend
     }
 
     /** Drops the underlying database table. */
@@ -68,29 +70,34 @@ public class TestDataDao extends AbstractDao<TestData, Long> {
             stmt.bindLong(1, id);
         }
  
+        String list_name = entity.getList_name();
+        if (list_name != null) {
+            stmt.bindString(2, list_name);
+        }
+ 
         String value = entity.getValue();
         if (value != null) {
-            stmt.bindString(2, value);
+            stmt.bindString(3, value);
         }
  
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(3, name);
+            stmt.bindString(4, name);
         }
  
         String fid = entity.getFid();
         if (fid != null) {
-            stmt.bindString(4, fid);
+            stmt.bindString(5, fid);
         }
  
         String father_node = entity.getFather_node();
         if (father_node != null) {
-            stmt.bindString(5, father_node);
+            stmt.bindString(6, father_node);
         }
  
         String recommend = entity.getRecommend();
         if (recommend != null) {
-            stmt.bindString(6, recommend);
+            stmt.bindString(7, recommend);
         }
     }
 
@@ -103,29 +110,34 @@ public class TestDataDao extends AbstractDao<TestData, Long> {
             stmt.bindLong(1, id);
         }
  
+        String list_name = entity.getList_name();
+        if (list_name != null) {
+            stmt.bindString(2, list_name);
+        }
+ 
         String value = entity.getValue();
         if (value != null) {
-            stmt.bindString(2, value);
+            stmt.bindString(3, value);
         }
  
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(3, name);
+            stmt.bindString(4, name);
         }
  
         String fid = entity.getFid();
         if (fid != null) {
-            stmt.bindString(4, fid);
+            stmt.bindString(5, fid);
         }
  
         String father_node = entity.getFather_node();
         if (father_node != null) {
-            stmt.bindString(5, father_node);
+            stmt.bindString(6, father_node);
         }
  
         String recommend = entity.getRecommend();
         if (recommend != null) {
-            stmt.bindString(6, recommend);
+            stmt.bindString(7, recommend);
         }
     }
 
@@ -138,11 +150,12 @@ public class TestDataDao extends AbstractDao<TestData, Long> {
     public TestData readEntity(Cursor cursor, int offset) {
         TestData entity = new TestData( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // value
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // name
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // fid
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // father_node
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // recommend
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // list_name
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // value
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // name
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // fid
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // father_node
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // recommend
         );
         return entity;
     }
@@ -150,11 +163,12 @@ public class TestDataDao extends AbstractDao<TestData, Long> {
     @Override
     public void readEntity(Cursor cursor, TestData entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setValue(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setFid(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setFather_node(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setRecommend(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setList_name(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setValue(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setFid(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setFather_node(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setRecommend(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
      }
     
     @Override

@@ -15,16 +15,18 @@ public class TestData {
     @Id
     private Long id;
 
+    private String list_name;
     private String value;
     private String name;
     private String fid;
     private String father_node;
     private String recommend;
 
-    @Generated(hash = 836796389)
-    public TestData(Long id, String value, String name, String fid,
-            String father_node, String recommend) {
+    @Generated(hash = 809661315)
+    public TestData(Long id, String list_name, String value, String name,
+            String fid, String father_node, String recommend) {
         this.id = id;
+        this.list_name = list_name;
         this.value = value;
         this.name = name;
         this.fid = fid;
@@ -35,13 +37,21 @@ public class TestData {
     @Generated(hash = 1580692206)
     public TestData() {
     }
-    
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getList_name() {
+        return list_name;
+    }
+
+    public void setList_name(String list_name) {
+        this.list_name = list_name;
     }
 
     public String getValue() {
@@ -92,6 +102,7 @@ public class TestData {
     public String toString() {
         return "TestData{" +
                 "id=" + id +
+                ", list_name='" + list_name + '\'' +
                 ", value='" + value + '\'' +
                 ", name='" + name + '\'' +
                 ", fid='" + fid + '\'' +
