@@ -10,6 +10,7 @@ public class TestKeyData {
     String name;
     String request_key;
     String list_name;
+    String value;
 
     public String getName() {
         return name;
@@ -33,5 +34,13 @@ public class TestKeyData {
 
     public void setList_name(String list_name) {
         this.list_name = list_name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

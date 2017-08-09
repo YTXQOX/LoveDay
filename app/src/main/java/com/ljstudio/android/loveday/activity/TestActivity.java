@@ -54,6 +54,8 @@ public class TestActivity extends AppCompatActivity {
     @BindView((R.id.id_test_recycler_view))
     RecyclerView recyclerView;
 
+    private TestKeyAdapter testKeyAdapter;
+
     private List<TestData> listItems1 = new ArrayList<>();
     private List<TestData> listItems2 = new ArrayList<>();
     private List<TestData> listItems3 = new ArrayList<>();
@@ -65,6 +67,11 @@ public class TestActivity extends AppCompatActivity {
     private String value1;
     private String value2;
     private String value3;
+
+    /**RecyclerView Data*/
+    private  List<TestKeyData> listKey = new ArrayList<>();
+    private String strDateKey;
+    private String strNumKey;
 
 
     @Override
@@ -348,7 +355,7 @@ public class TestActivity extends AppCompatActivity {
 
             String strData = jsonObject.optJSONObject(RESULT).optString(DATA);
             Gson gson = new Gson();
-            final List<TestKeyData> listKey = gson.fromJson(strData, new TypeToken<List<TestKeyData>>() {
+            listKey = gson.fromJson(strData, new TypeToken<List<TestKeyData>>() {
             }.getType());
 
             List<TestKeyData> tempListKey = new ArrayList<>();
@@ -361,22 +368,28 @@ public class TestActivity extends AppCompatActivity {
                     tempListKey.add(testKeyData1);
                 }
 
-                if (testKeyData1.getList_name().equals(YEAR_LIST) ||
-                        testKeyData1.getList_name().equals(MONTH_LIST)) {
+                if (testKeyData1.getList_name().equals(YEAR_LIST) || testKeyData1.getList_name().equals(MONTH_LIST)) {
                     dateListKey.add(testKeyData1);
+
+                    /**年/月限 list_name 值 (year_list 或 month_list)*/
+                    strDateKey = testKeyData1.getList_name();
                 }
 
                 if (testKeyData1.getList_name().equals(NUM_LIST)) {
                     numListKey.add(testKeyData1);
+
+                    /**数量 list_name 值 (num_list)*/
+                    strNumKey = testKeyData1.getList_name();
                 }
             }
 
             List<TestData> listAll = new ArrayList<>();
             JSONObject object = jsonObject.optJSONObject(RESULT).optJSONObject(EXTEND);
 
+            /**得到 年/月限 值*/
             final List<Integer> listDate = gson.fromJson(object.optString(dateListKey.get(0).getList_name()), new TypeToken<List<Integer>>() {
             }.getType());
-
+            /**得到 数量 值*/
             final List<Integer> listNum = gson.fromJson(object.optString(numListKey.get(0).getList_name()), new TypeToken<List<Integer>>() {
             }.getType());
 
@@ -384,12 +397,17 @@ public class TestActivity extends AppCompatActivity {
             layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManager1);
             recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).build());
-            TestKeyAdapter testKeyAdapter = new TestKeyAdapter(R.layout.layout_test_item, listKey, listDate, listNum);
+            testKeyAdapter = new TestKeyAdapter(R.layout.layout_test_item, listKey);
             recyclerView.setAdapter(testKeyAdapter);
+
+            /**更新 年/月限 默认数据*/
+            updateData(strDateKey, "1");
+            /**更新 数量 默认数据*/
+            updateData(strNumKey, "1");
 
             testKeyAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(BaseQuickAdapter adapter, View view, final int position) {
                     if (listKey.get(position).getList_name().equals(YEAR_LIST) ||
                             listKey.get(position).getList_name().equals(MONTH_LIST)) {
                         List<String> list = new ArrayList<>();
@@ -402,7 +420,8 @@ public class TestActivity extends AppCompatActivity {
                                 setItems(items, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        String.valueOf(items[which]);
+                                        /**更新自己数据*/
+                                        updateData(listKey.get(position).getList_name(), items[which]);
                                     }
                                 }).create();
                         alertDialog.show();
@@ -417,7 +436,8 @@ public class TestActivity extends AppCompatActivity {
                                 setItems(items, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        String.valueOf(items[which]);
+                                        /**更新自己数据*/
+                                        updateData(listKey.get(position).getList_name(), items[which]);
                                     }
                                 }).create();
                         alertDialog.show();
@@ -426,15 +446,19 @@ public class TestActivity extends AppCompatActivity {
                         for (TestData testData : listItems1) {
                             list.add(testData.getName());
                         }
-                        final String[] items = list.toArray(new String[list.size()]);
+                        final String[] items1 = list.toArray(new String[list.size()]);
 
                         Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
-                                setItems(items, new DialogInterface.OnClickListener() {
+                                setItems(items1, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        value1 = readOne4DB(items[which]).get(0).getValue();
+                                        value1 = readOne4DB(items1[which]).get(0).getValue();
                                         listItems2 = readOne4DB(value1, strFirstListName);
 
+                                        /**更新自己数据*/
+                                        updateData(listKey.get(position).getList_name(), items1[which]);
+
+                                        /**更新下一级数据*/
                                         initSecondView(value1, strFirstListName);
                                     }
                                 }).create();
@@ -451,11 +475,13 @@ public class TestActivity extends AppCompatActivity {
                                 setItems(items2, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        String.valueOf(items2[which]);
-
                                         value2 = readOne4DB(items2[which]).get(0).getValue();
                                         listItems3 = readOne4DB(value2, strSecondListName);
 
+                                        /**更新自己数据*/
+                                        updateData(listKey.get(position).getList_name(), items2[which]);
+
+                                        /**更新下一级数据*/
                                         initThirdView(value2, strSecondListName);
                                     }
                                 }).create();
@@ -472,7 +498,8 @@ public class TestActivity extends AppCompatActivity {
                                 setItems(items3, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        String.valueOf(items3[which]);
+                                        /**更新自己数据*/
+                                        updateData(listKey.get(position).getList_name(), items3[which]);
                                     }
                                 }).create();
 
@@ -530,6 +557,8 @@ public class TestActivity extends AppCompatActivity {
         strFirstListName = list1.get(0).getList_name();
         listItems2 = readOne4DB(value1, strFirstListName);
 
+        updateData(strFirstListName ,strDefaultName);
+
         initSecondView(value1, list1.get(0).getList_name());
     }
 
@@ -555,6 +584,8 @@ public class TestActivity extends AppCompatActivity {
         strSecondListName = list2.get(0).getList_name();
         listItems3 = readOne4DB(value2, strSecondListName);
 
+        updateData(strSecondListName ,strDefaultName);
+
         initThirdView(value2, strSecondListName);
     }
 
@@ -578,6 +609,20 @@ public class TestActivity extends AppCompatActivity {
         }
 
         strThirdListName = list3.get(0).getList_name();
+
+        updateData(strThirdListName ,strDefaultName);
+    }
+
+    private void updateData(String name, String value) {
+        for (int i = 0; i < listKey.size(); i++) {
+            TestKeyData testKeyData1 = listKey.get(i);
+            if (testKeyData1.getList_name().equals(name)) {
+                listKey.get(i).setValue(value);
+                break;
+            }
+        }
+
+        testKeyAdapter.notifyDataSetChanged();
     }
 
     private void deleteAll4DB() {

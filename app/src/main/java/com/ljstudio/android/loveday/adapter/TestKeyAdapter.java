@@ -13,19 +13,15 @@ import java.util.List;
 
 public class TestKeyAdapter extends BaseQuickAdapter<TestKeyData, BaseViewHolder> {
 
-    private List<Integer> listDate;
-    private List<Integer> listNum;
 
-    public TestKeyAdapter(@LayoutRes int layoutResId, @Nullable List<TestKeyData> data, List<Integer> listDate, List<Integer> listNum) {
+    public TestKeyAdapter(@LayoutRes int layoutResId, @Nullable List<TestKeyData> data) {
         super(layoutResId, data);
-        this.listDate = listDate;
-        this.listNum = listNum;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, TestKeyData item) {
         helper.setText(R.id.id_test_item_title, item.getName());
-        helper.setText(R.id.id_test_item_content, item.getList_name());
+        helper.setText(R.id.id_test_item_content, item.getValue());
     }
 
 }
