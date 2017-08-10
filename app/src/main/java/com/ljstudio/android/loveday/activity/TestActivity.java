@@ -56,20 +56,15 @@ public class TestActivity extends AppCompatActivity {
 
     private TestKeyAdapter testKeyAdapter;
 
-    private List<TestData> listItems1 = new ArrayList<>();
-    private List<TestData> listItems2 = new ArrayList<>();
-    private List<TestData> listItems3 = new ArrayList<>();
+    private List<List<TestData>> listItems = new ArrayList<>();
+    private List<String> listStrListName = new ArrayList<>();
+    private List<String> listValue = new ArrayList<>();
 
-    private String strFirstListName;
-    private String strSecondListName;
-    private String strThirdListName;
-
-    private String value1;
-    private String value2;
-    private String value3;
-
-    /**RecyclerView Data*/
-    private  List<TestKeyData> listKey = new ArrayList<>();
+    /**
+     * RecyclerView Data
+     */
+    private List<TestKeyData> listKey = new ArrayList<>();
+    private List<TestKeyData> tempListKey = new ArrayList<>();
     private String strDateKey;
     private String strNumKey;
 
@@ -358,7 +353,7 @@ public class TestActivity extends AppCompatActivity {
             listKey = gson.fromJson(strData, new TypeToken<List<TestKeyData>>() {
             }.getType());
 
-            List<TestKeyData> tempListKey = new ArrayList<>();
+            tempListKey = new ArrayList<>();
             List<TestKeyData> dateListKey = new ArrayList<>();
             List<TestKeyData> numListKey = new ArrayList<>();
             for (TestKeyData testKeyData1 : listKey) {
@@ -441,9 +436,9 @@ public class TestActivity extends AppCompatActivity {
                                     }
                                 }).create();
                         alertDialog.show();
-                    } else if (listKey.get(position).getList_name().equals(strFirstListName)) {
+                    } else if (listKey.get(position).getList_name().equals(listStrListName.get(position))) {
                         List<String> list = new ArrayList<>();
-                        for (TestData testData : listItems1) {
+                        for (TestData testData : listItems.get(position)) {
                             list.add(testData.getName());
                         }
                         final String[] items1 = list.toArray(new String[list.size()]);
@@ -452,54 +447,14 @@ public class TestActivity extends AppCompatActivity {
                                 setItems(items1, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        value1 = readOne4DB(items1[which]).get(0).getValue();
-                                        listItems2 = readOne4DB(value1, strFirstListName);
+                                        listValue.set(position, readOne4DB(items1[which]).get(0).getValue());
+                                        listItems.set(position + 1, readOne4DB(listValue.get(position), listStrListName.get(position)));
 
                                         /**更新自己数据*/
                                         updateData(listKey.get(position).getList_name(), items1[which]);
 
                                         /**更新下一级数据*/
-                                        initSecondView(value1, strFirstListName);
-                                    }
-                                }).create();
-
-                        alertDialog.show();
-                    } else if (listKey.get(position).getList_name().equals(strSecondListName)) {
-                        List<String> list2 = new ArrayList<>();
-                        for (TestData testData : listItems2) {
-                            list2.add(testData.getName());
-                        }
-                        final String[] items2 = list2.toArray(new String[list2.size()]);
-
-                        Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
-                                setItems(items2, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        value2 = readOne4DB(items2[which]).get(0).getValue();
-                                        listItems3 = readOne4DB(value2, strSecondListName);
-
-                                        /**更新自己数据*/
-                                        updateData(listKey.get(position).getList_name(), items2[which]);
-
-                                        /**更新下一级数据*/
-                                        initThirdView(value2, strSecondListName);
-                                    }
-                                }).create();
-
-                        alertDialog.show();
-                    } else if (listKey.get(position).getList_name().equals(strThirdListName)) {
-                        List<String> list3 = new ArrayList<>();
-                        for (TestData testData : listItems3) {
-                            list3.add(testData.getName());
-                        }
-                        final String[] items3 = list3.toArray(new String[list3.size()]);
-
-                        Dialog alertDialog = new AlertDialog.Builder(TestActivity.this).
-                                setItems(items3, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        /**更新自己数据*/
-                                        updateData(listKey.get(position).getList_name(), items3[which]);
+                                        update(position + 1);
                                     }
                                 }).create();
 
@@ -531,19 +486,36 @@ public class TestActivity extends AppCompatActivity {
     private void initView() {
         readAll4DB();
 
-        initFirstView();
+        update(0);
+    }
+
+    private void update(int index) {
+        for (int i = index; i < tempListKey.size(); i++) {
+            if (0 == i) {
+                initFirstView();
+            } else if (tempListKey.size() - 1 == i) {
+                initLastView(listValue.get(i - 1), listStrListName.get(i - 1));
+            } else {
+                initMiddleView(listValue.get(i - 1), listStrListName.get(i - 1));
+            }
+        }
     }
 
     private void initFirstView() {
         boolean isDefault = false;
         String strDefaultName = "";
+        String value1 = "";
 
-        listItems1 = readFatherNodeNull();
+        List<TestData> listItems1 = readFatherNodeNull();
+        listItems.add(listItems1);
+
         List<TestData> list1 = readFatherNodeNull();
         for (TestData testData : list1) {
             if (testData.getRecommend().equals("1")) {
                 isDefault = true;
                 value1 = testData.getValue();
+                listValue.add(value1);
+
                 strDefaultName = testData.getName();
                 break;
             }
@@ -551,26 +523,34 @@ public class TestActivity extends AppCompatActivity {
 
         if (!isDefault) {
             value1 = list1.get(0).getValue();
+            listValue.add(value1);
+
             strDefaultName = list1.get(0).getName();
         }
 
-        strFirstListName = list1.get(0).getList_name();
-        listItems2 = readOne4DB(value1, strFirstListName);
+        String strFirstListName = list1.get(0).getList_name();
+        listStrListName.add(strFirstListName);
 
-        updateData(strFirstListName ,strDefaultName);
+        List<TestData> listItems2 = readOne4DB(value1, strFirstListName);
+        listItems.add(listItems2);
 
-        initSecondView(value1, list1.get(0).getList_name());
+        updateData(strFirstListName, strDefaultName);
+
+//        initMiddleView(value1, strFirstListName);
     }
 
-    private void initSecondView(String value, String father_node) {
+    private void initMiddleView(String value, String father_node) {
         boolean isDefault = false;
         String strDefaultName = "";
+        String value2 = "";
 
         List<TestData> list2 = readOne4DB(value, father_node);
         for (TestData testData : list2) {
             if (testData.getRecommend().equals("1")) {
                 isDefault = true;
                 value2 = testData.getValue();
+                listValue.add(value2);
+
                 strDefaultName = testData.getName();
                 break;
             }
@@ -578,26 +558,34 @@ public class TestActivity extends AppCompatActivity {
 
         if (!isDefault) {
             value2 = list2.get(0).getValue();
+            listValue.add(value2);
+
             strDefaultName = list2.get(0).getName();
         }
 
-        strSecondListName = list2.get(0).getList_name();
-        listItems3 = readOne4DB(value2, strSecondListName);
+        String strSecondListName = list2.get(0).getList_name();
+        listStrListName.add(strSecondListName);
 
-        updateData(strSecondListName ,strDefaultName);
+        List<TestData> listItems3 = readOne4DB(value2, strSecondListName);
+        listItems.add(listItems3);
 
-        initThirdView(value2, strSecondListName);
+        updateData(strSecondListName, strDefaultName);
+
+//        initLastView(value2, strSecondListName);
     }
 
-    private void initThirdView(String value, String father_node) {
+    private void initLastView(String value, String father_node) {
         boolean isDefault = false;
         String strDefaultName = "";
+        String value3 = "";
 
         List<TestData> list3 = readOne4DB(value, father_node);
         for (TestData testData : list3) {
             if (testData.getRecommend().equals("1")) {
                 isDefault = true;
                 value3 = testData.getValue();
+                listValue.add(value3);
+
                 strDefaultName = testData.getName();
                 break;
             }
@@ -605,12 +593,15 @@ public class TestActivity extends AppCompatActivity {
 
         if (!isDefault) {
             value3 = list3.get(0).getValue();
+            listValue.add(value3);
+
             strDefaultName = list3.get(0).getName();
         }
 
-        strThirdListName = list3.get(0).getList_name();
+        String strThirdListName = list3.get(0).getList_name();
+        listStrListName.add(strThirdListName);
 
-        updateData(strThirdListName ,strDefaultName);
+        updateData(strThirdListName, strDefaultName);
     }
 
     private void updateData(String name, String value) {
