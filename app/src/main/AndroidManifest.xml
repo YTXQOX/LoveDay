@@ -13,7 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.SplashActivity">
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,11 +27,11 @@
             android:name="APK_CHANNEL"
             android:value="ONLINE" />
 
-        <activity android:name=".activity.MainActivity"/>
-        <activity android:name=".activity.DetailActivity"/>
-        <activity android:name=".activity.EditActivity"/>
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.DetailActivity" />
+        <activity android:name=".activity.EditActivity" />
 
-        <activity android:name=".activity.TestActivity"/>
+        <activity android:name=".activity.TestActivity" />
 
     </application>
 

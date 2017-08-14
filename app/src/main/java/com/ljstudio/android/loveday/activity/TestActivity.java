@@ -447,14 +447,16 @@ public class TestActivity extends AppCompatActivity {
                                 setItems(items1, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        listValue.set(position, readOne4DB(items1[which]).get(0).getValue());
-                                        listItems.set(position + 1, readOne4DB(listValue.get(position), listStrListName.get(position)));
+                                        if (position < tempListKey.size() - 1) {
+                                            listValue.set(position, readOne4DB(items1[which]).get(0).getValue());
+                                            listItems.set(position + 1, readOne4DB(listValue.get(position), listStrListName.get(position)));
+
+                                            /**更新下一级数据*/
+                                            update(position + 1);
+                                        }
 
                                         /**更新自己数据*/
                                         updateData(listKey.get(position).getList_name(), items1[which]);
-
-                                        /**更新下一级数据*/
-                                        update(position + 1);
                                     }
                                 }).create();
 
