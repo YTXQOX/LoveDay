@@ -22,6 +22,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -43,6 +45,8 @@ public class FishDrawableView extends RelativeLayout {
     private float x = 0;
     private float y = 0;
     private float radius = 0;
+
+    private List<Boolean> listTouch = new ArrayList<>();
 
 
     public FishDrawableView(Context context) {
@@ -67,7 +71,7 @@ public class FishDrawableView extends RelativeLayout {
      * @param angle
      * @return
      */
-    private static PointF calculatPoint(PointF startPoint, float length, float angle) {
+    private static PointF calculatePoint(PointF startPoint, float length, float angle) {
         float deltaX = (float) Math.cos(Math.toRadians(angle)) * length;
         //符合Android坐标的y轴朝下的标准
         float deltaY = (float) Math.sin(Math.toRadians(angle - 180)) * length;
@@ -81,7 +85,7 @@ public class FishDrawableView extends RelativeLayout {
      * @param end
      * @return
      */
-    public static float calcultatAngle(PointF start, PointF end) {
+    public static float calculateAngle(PointF start, PointF end) {
         return includedAngle(start, new PointF(start.x + 1, start.y), end);
     }
 
@@ -161,7 +165,12 @@ public class FishDrawableView extends RelativeLayout {
         y = event.getY();
         rippleAnimator = ObjectAnimator.ofFloat(this, "radius", 0f, 1f).setDuration(1000);
         rippleAnimator.start();
-        makeTrail(new PointF(x, y));
+
+        boolean bTouch = false;
+        listTouch.add(bTouch);
+
+        makeTrail(new PointF(x, y), listTouch.size() - 1);
+
         return super.onTouchEvent(event);
     }
 
@@ -171,7 +180,7 @@ public class FishDrawableView extends RelativeLayout {
      * @param touch
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void makeTrail(PointF touch) {
+    private void makeTrail(PointF touch, final int index) {
         /**
          * 起点和中点是鱼的身体重心处和点击点，三阶贝塞尔的两个控制点分别是鱼头圆心点和夹角中点。
          * 但是平移不是平移的鱼，而是平移的ImageView，而ImageView的setX，setY方法是相对于ImageView左上角的
@@ -186,8 +195,8 @@ public class FishDrawableView extends RelativeLayout {
         //把贝塞尔曲线起始点平移到Imageview的左上角
         path.moveTo(fishMiddle.x - deltaX, fishMiddle.y - deltaY);
         final float angle = includedAngle(fishMiddle, fishHead, touch);
-        float delta = calcultatAngle(fishMiddle, fishHead);
-        PointF controlF = calculatPoint(fishMiddle, 1.6f * fishDrawable.HEAD_RADIUS, angle / 2 + delta);
+        float delta = calculateAngle(fishMiddle, fishHead);
+        PointF controlF = calculatePoint(fishMiddle, 1.6f * fishDrawable.HEAD_RADIUS, angle / 2 + delta);
         //把贝塞尔曲线的所有控制点和结束点都做平移处理
         path.cubicTo(fishHead.x - deltaX, fishHead.y - deltaY, controlF.x - deltaX, controlF.y - deltaY, touch.x - deltaX, touch.y - deltaY);
 
@@ -201,14 +210,20 @@ public class FishDrawableView extends RelativeLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                fishDrawable.setWaveFrequence(1f);
+//                Log.i("onAnimationEnd-->", "onAnimationEnd()");
 
-                onAnimationFinishedListener.onFinished();
+                fishDrawable.setWaveFrequence(1f);
+                listTouch.set(index, true);
+                if (listTouch.get(listTouch.size() - 1)) {
+//                    Log.i("onAnimationEnd-->", "event");
+                    onAnimationFinishedListener.onFinished();
+                }
             }
 
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
+//                Log.i("onAnimationStart-->", "onAnimationStart()");
                 fishDrawable.setWaveFrequence(2f);
                 ObjectAnimator finsAnimator = fishDrawable.getFinsAnimator();
                 finsAnimator.setRepeatCount(new Random().nextInt(3));
@@ -223,7 +238,8 @@ public class FishDrawableView extends RelativeLayout {
                 float fraction = animation.getAnimatedFraction();
                 pathMeasure.getPosTan(pathMeasure.getLength() * fraction, null, tan);
                 float angle = (float) (Math.toDegrees(Math.atan2(-tan[1], tan[0])));
-                Log.e("onAnimationUpdate-->", angle + "");
+//                Log.i("onAnimationUpdate-->", angle + "");
+
                 fishDrawable.setMainAngle(angle);
             }
         });
