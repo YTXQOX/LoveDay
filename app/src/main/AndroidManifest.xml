@@ -33,6 +33,22 @@
 
         <activity android:name=".activity.TestActivity" />
 
+        <receiver android:name="com.ljstudio.android.loveday.receiver.MyAppWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.ljstudio.android.loveday.UPDATE_ALL" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/my_widget_info" />
+        </receiver>
+
+
+        <service android:name="com.ljstudio.android.loveday.service.MyAppWidgetService">
+            <intent-filter>
+                <action android:name="android.appwidget.action.MY_APP_WIDGET_SERVICE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

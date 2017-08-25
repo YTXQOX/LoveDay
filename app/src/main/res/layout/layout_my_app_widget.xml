@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/custom_detail_bg"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/id_widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/custom_detail_title_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="title"
+        android:lines="1"
+        android:ellipsize="middle"
+        android:textSize="18dp"
+        android:textColor="@color/colorWhite" />
+
+    <TextView
+        android:id="@+id/id_widget_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@color/colorGrayLighter"
+        android:padding="4dp"
+        android:textSize="16sp"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/colorAccent"
+        android:text="date" />
+
+    <TextView
+        android:id="@+id/id_widget_days"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="4dp"
+        android:layout_below="@id/id_widget_title"
+        android:layout_above="@id/id_widget_date"
+        android:layout_centerInParent="true"
+        android:text="days"
+        android:textSize="30sp"
+        android:textColor="@color/colorAccent" />
+</RelativeLayout>
