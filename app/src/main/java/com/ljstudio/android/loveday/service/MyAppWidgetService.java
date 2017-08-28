@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.format.Time;
+
+import com.ljstudio.android.loveday.receiver.MyAppWidgetProvider;
+
 
 /**
  * Created by guoren on 2017/8/25 15:53
@@ -13,8 +17,8 @@ import android.support.annotation.Nullable;
 
 public class MyAppWidgetService extends Service {
 
-    private final String ACTION_UPDATE_ALL = "com.ljstudio.android.loveday.UPDATE_ALL";
-    private static final int UPDATE_TIME = 6000 * 3600;
+    private static final int UPDATE_TIME = 1000 * 60 * 60;
+
     private UpdateThread mUpdateThread;
     private Context mContext;
     private int count = 0;
@@ -63,7 +67,13 @@ public class MyAppWidgetService extends Service {
                 while (true) {
                     count++;
 
-                    Intent updateIntent = new Intent(ACTION_UPDATE_ALL);
+                    Time time = new Time();
+                    time.setToNow();
+                    int h = time.hour;
+                    int m = time.minute;
+                    int s = time.second;
+
+                    Intent updateIntent = new Intent(MyAppWidgetProvider.ACTION_UPDATE_ALL);
                     mContext.sendBroadcast(updateIntent);
 
                     Thread.sleep(UPDATE_TIME);

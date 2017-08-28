@@ -12,11 +12,11 @@ import android.widget.RemoteViews;
 
 import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
-import com.ljstudio.android.loveday.activity.DetailActivity;
 import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.DateUtil;
+import com.ljstudio.android.loveday.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,8 +32,8 @@ import java.util.Set;
 
 public class MyAppWidgetProvider extends AppWidgetProvider {
 
+    public static final String ACTION_UPDATE_ALL = "com.ljstudio.android.loveday.UPDATE_ALL";
     private static final String TAG = "MyAppWidgetProvider";
-    private final String ACTION_UPDATE_ALL = "com.ljstudio.android.loveday.UPDATE_ALL";
     private final Intent MY_APP_SERVICE_INTENT = new Intent("android.appwidget.action.MY_APP_WIDGET_SERVICE");
     private static Set idsSet = new HashSet();
     private static final int BUTTON_SHOW = 1;
@@ -51,15 +51,21 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         if (ACTION_UPDATE_ALL.equals(action)) {
-            initData();
+            ToastUtil.toastShortCenter(context, "Thread更新 Widget");
 
+            initData();
             updateAllAppWidgets(context, AppWidgetManager.getInstance(context), idsSet);
         } else if (intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
             Uri data = intent.getData();
             int buttonId = Integer.parseInt(data.getSchemeSpecificPart());
-            if (buttonId == BUTTON_SHOW) {
-                Intent i = new Intent(context, DetailActivity.class);
-                context.startActivity(i);
+            if (buttonId == BUTTON_SHOW) {                ToastUtil.toastShortCenter(context, "点击更新 Widget");
+
+
+                initData();
+                updateAllAppWidgets(context, AppWidgetManager.getInstance(context), idsSet);
+
+//                Intent i = new Intent(context, DetailActivity.class);
+//                context.startActivity(i);
             }
         }
 
@@ -73,7 +79,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         }
         prtSet();
 
-        initData();
+//        initData();
 
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
@@ -83,6 +89,11 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
 
+    /**
+     *  当 widget 被删除时被触发
+     * @param context
+     * @param appWidgetIds
+     */
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
@@ -93,6 +104,10 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         super.onDeleted(context, appWidgetIds);
     }
 
+    /**
+     * 当第1个 widget 的实例被创建时触发
+     * @param context
+     */
     @Override
     public void onEnabled(Context context) {
         mContext = context;
@@ -106,6 +121,10 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         super.onEnabled(context);
     }
 
+    /**
+     * 当最后1个 widget 的实例被删除时触发
+     * @param context
+     */
     @Override
     public void onDisabled(Context context) {
         mContext = context;
@@ -128,6 +147,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         listDays = readAll4DB();
         if (listDays == null || listDays.size() == 0) {
             testData();
+            listDays = readAll4DB();
         }
     }
 
