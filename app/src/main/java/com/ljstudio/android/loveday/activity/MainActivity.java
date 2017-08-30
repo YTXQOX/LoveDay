@@ -3,6 +3,7 @@ package com.ljstudio.android.loveday.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -90,6 +92,16 @@ public class MainActivity extends AppCompatActivity {
     private TriangulationDrawable triangulationDrawable;
     private boolean isColorfulBg;
 
+    private Handler mHandler;
+
+    private SingleClick singleClick;
+    private DoubleClick doubleClick;
+    private TripleClick tripleClick;
+
+    private long mClickTime1 = 0;
+    private long mClickTime2 = 0;
+    private long mClickTime3 = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,18 +117,29 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
 
+        mHandler = new Handler();
+
         isColorfulBg = PreferencesUtil.getPrefBoolean(MainActivity.this, Constant.COLORFUL_BG, false);
         refreshUI(isColorfulBg);
 
-        labelView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showEasterEgg();
+//        labelView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showEasterEgg();
 
 //                Intent intent = new Intent(MainActivity.this, TestActivity.class);
 //                startActivity(intent);
+//            }
+//        });
+
+        labelView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                onClick(event, "easter_egg");
+                return false;
             }
         });
+
 
         if (checkIsFirst()) {
             File filePath = getSDCardFolderPath("Export");
@@ -137,6 +160,81 @@ public class MainActivity extends AppCompatActivity {
 
         FontsManager.initFormAssets(this, "fonts/gtw.ttf");
         FontsManager.changeFonts(this);
+    }
+
+    private void onClick(MotionEvent event, String name) {
+        mClickTime3 = mClickTime2;
+        mClickTime2 = mClickTime1;
+        mClickTime1 = event.getEventTime();
+        if ((mClickTime1 - mClickTime3) < 600) {
+            // 三击 先取消双击单击的post
+            if (doubleClick != null)
+                mHandler.removeCallbacks(doubleClick);
+            if (singleClick != null)
+                mHandler.removeCallbacks(singleClick);
+            tripleClick = new TripleClick(name);
+            mHandler.post(tripleClick);
+            // 防止连按四下多次执行三击操作
+            mClickTime3 = 0;
+        } else if ((mClickTime1 - mClickTime2) < 300) {
+            // 双击 先取消单击的post
+            if (singleClick != null)
+                mHandler.removeCallbacks(singleClick);
+//            doubleClick = new DoubleClick(name);
+//            mHandler.postDelayed(doubleClick, 300);
+        } else {
+            // 单击
+//            singleClick = new SingleClick(name);
+//            mHandler.postDelayed(singleClick, 300);
+        }
+    }
+
+    /**
+     * 单击
+     */
+    class SingleClick implements Runnable {
+        String str;
+
+        SingleClick(String str) {
+            this.str = str;
+        }
+
+        @Override
+        public void run() {
+
+        }
+    }
+
+    /**
+     * 双击
+     */
+    class DoubleClick implements Runnable {
+        String str;
+
+        DoubleClick(String name) {
+            this.str = str;
+        }
+
+        @Override
+        public void run() {
+
+        }
+    }
+
+    /**
+     * 三击
+     */
+    class TripleClick implements Runnable {
+        String str;
+
+        TripleClick(String str) {
+            this.str = str;
+        }
+
+        @Override
+        public void run() {
+            showEasterEgg();
+        }
     }
 
     private void refreshUI(boolean isColorful) {

@@ -51,7 +51,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         if (ACTION_UPDATE_ALL.equals(action)) {
-            ToastUtil.toastShortCenter(context, "Thread更新 Widget");
+//            ToastUtil.toastShortCenter(context, "Thread更新 Widget");
 
             initData();
             updateAllAppWidgets(context, AppWidgetManager.getInstance(context), idsSet);

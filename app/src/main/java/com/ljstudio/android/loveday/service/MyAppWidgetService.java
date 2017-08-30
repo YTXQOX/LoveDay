@@ -17,7 +17,7 @@ import com.ljstudio.android.loveday.receiver.MyAppWidgetProvider;
 
 public class MyAppWidgetService extends Service {
 
-    private static final int UPDATE_TIME = 1000 * 60 * 60;
+    private static final int UPDATE_TIME = 1000 * 60 * 10;
 
     private UpdateThread mUpdateThread;
     private Context mContext;
@@ -73,8 +73,10 @@ public class MyAppWidgetService extends Service {
                     int m = time.minute;
                     int s = time.second;
 
-                    Intent updateIntent = new Intent(MyAppWidgetProvider.ACTION_UPDATE_ALL);
-                    mContext.sendBroadcast(updateIntent);
+                    if (0 == h) {
+                        Intent updateIntent = new Intent(MyAppWidgetProvider.ACTION_UPDATE_ALL);
+                        mContext.sendBroadcast(updateIntent);
+                    }
 
                     Thread.sleep(UPDATE_TIME);
                 }
