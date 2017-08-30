@@ -143,8 +143,18 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
         data.setIsTop(false);
 
         if (400 == mEditType) {
+//            DaysData tempData = readOne4DB(daysData.getId()).get(0);
+//            data.setId(daysData.getId());
+//            data.setTitle(strEventTitle);
+//            data.setDate(strEventDate);
+//            data.setDays("1");
+//            data.setUnit("天");
+//            data.setIsTop(false);
+//            writeOne2DB(tempData);
+
             deleteOne4DB(daysData.getId());
         }
+
         writeOne2DB(data);
     }
 

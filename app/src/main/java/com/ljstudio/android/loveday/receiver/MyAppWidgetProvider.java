@@ -58,8 +58,8 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         } else if (intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
             Uri data = intent.getData();
             int buttonId = Integer.parseInt(data.getSchemeSpecificPart());
-            if (buttonId == BUTTON_SHOW) {                ToastUtil.toastShortCenter(context, "点击更新 Widget");
-
+            if (buttonId == BUTTON_SHOW) {
+                ToastUtil.toastShortCenter(context, "好的 爱你");
 
                 initData();
                 updateAllAppWidgets(context, AppWidgetManager.getInstance(context), idsSet);
@@ -90,7 +90,8 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
     }
 
     /**
-     *  当 widget 被删除时被触发
+     * 当 widget 被删除时被触发
+     *
      * @param context
      * @param appWidgetIds
      */
@@ -106,6 +107,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
 
     /**
      * 当第1个 widget 的实例被创建时触发
+     *
      * @param context
      */
     @Override
@@ -123,6 +125,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
 
     /**
      * 当最后1个 widget 的实例被删除时触发
+     *
      * @param context
      */
     @Override

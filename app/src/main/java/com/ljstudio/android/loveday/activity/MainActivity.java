@@ -39,6 +39,7 @@ import com.ljstudio.android.loveday.utils.FileUtil;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
+import com.ljstudio.android.loveday.utils.VersionUtil;
 import com.ljstudio.android.loveday.views.LabelView;
 import com.ljstudio.android.loveday.views.excel.ExcelManager;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
@@ -56,6 +57,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -286,7 +289,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initTopData() {
-        DaysData data = listDays.get(0);
+        DaysData data;
+        List<DaysData> list = readTop4DB();
+        if (list == null || 0 == list.size()) {
+            data = listDays.get(0);
+        } else {
+            data =  list.get(0);
+        }
 
         tvTopTitle.setText(data.getTitle());
 
@@ -343,6 +352,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private List<DaysData> readTop4DB() {
+        final DaysDataDao dao = MyApplication.getDaoSession(this).getDaysDataDao();
+        List<DaysData> list = dao.queryBuilder()
+                .where(DaysDataDao.Properties.IsTop.eq(true))
+                .orderAsc(DaysDataDao.Properties.Id)
+                .build().list();
+
+        return list;
+    }
+
     private void readOne4DB(Long id) {
         final DaysDataDao dao = MyApplication.getDaoSession(this).getDaysDataDao();
         List<DaysData> list = dao.queryBuilder()
@@ -390,21 +409,62 @@ public class MainActivity extends AppCompatActivity {
     private void resetData() {
         listDays.clear();
         listDays = readAll4DB();
+
         if (listDays == null || listDays.size() == 0) {
             testData();
 
             Toasty.info(MainActivity.this, "无数据，已为您恢复默认数据").show();
+        } else {
+            List<DaysData> listDaysPrevious = new ArrayList<>();
+            List<DaysData> listDaysFuture = new ArrayList<>();
+            for (DaysData daysData : listDays) {
+                Date date = DateFormatUtil.convertStr2Date(daysData.getDate(), DateFormatUtil.sdfDate1);
+                if (1 == DateUtil.compareDate(date, new Date())) {
+                    listDaysFuture.add(daysData);
+                    Collections.sort(listDaysFuture, compFuture);
+                } else {
+                    listDaysPrevious.add(daysData);
+                    Collections.sort(listDaysPrevious, compPrevious);
+                }
+            }
+            listDays.clear();
+            listDays.addAll(listDaysFuture);
+            listDays.addAll(listDaysPrevious);
         }
-//        SystemOutUtil.sysOut("listDays.size()-->" + listDays.size());
 
+//        SystemOutUtil.sysOut("listDays.size()-->" + listDays.size());
         initTopData();
         initListData();
     }
 
+    Comparator compPrevious = new Comparator() {
+        public int compare(Object o1, Object o2) {
+            DaysData data1 = (DaysData) o1;
+            DaysData data2 = (DaysData) o2;
+
+            Date date1 = DateFormatUtil.convertStr2Date(data1.getDate(), DateFormatUtil.sdfDate1);
+            Date date2 = DateFormatUtil.convertStr2Date(data2.getDate(), DateFormatUtil.sdfDate1);
+
+            return DateUtil.compareDate(date2, date1);
+        }
+    };
+
+    Comparator compFuture = new Comparator() {
+        public int compare(Object o1, Object o2) {
+            DaysData data1 = (DaysData) o1;
+            DaysData data2 = (DaysData) o2;
+
+            Date date1 = DateFormatUtil.convertStr2Date(data1.getDate(), DateFormatUtil.sdfDate1);
+            Date date2 = DateFormatUtil.convertStr2Date(data2.getDate(), DateFormatUtil.sdfDate1);
+
+            return DateUtil.compareDate(date1, date2);
+        }
+    };
+
     private void showEasterEgg() {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this);
         builder.title("我是彩蛋");
-        builder.content(getString(R.string.easter_egg_content));
+        builder.content(getString(R.string.easter_egg_content) + VersionUtil.getVersionName(MainActivity.this));
         builder.positiveText("确定");
         builder.onPositive(new MaterialDialog.SingleButtonCallback() {
             @Override
