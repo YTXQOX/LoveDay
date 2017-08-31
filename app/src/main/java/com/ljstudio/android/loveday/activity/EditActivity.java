@@ -22,6 +22,7 @@ import com.ljstudio.android.loveday.eventbus.MessageEvent;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
+import com.ljstudio.android.loveday.views.SwitchView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -47,6 +48,10 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
     TextInputEditText tvTitle;
     @BindView(R.id.id_days_edit_date_text)
     TextView tvTime;
+    @BindView(R.id.id_days_edit_top_text)
+    TextView tvTop;
+    @BindView(R.id.id_days_edit_switch)
+    SwitchView mSwitchView;
     @BindView(R.id.id_days_edit_save)
     Button tvSave;
 
@@ -55,6 +60,7 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
     private DatePickerDialog datePickerDialog;
     private String strEventTitle;
     private String strEventDate;
+    private boolean isTop;
 
     private DaysData daysData;
 
@@ -98,6 +104,7 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
         if (200 == mEditType) {
             toolbar.setTitle("新增时光の记忆");
             tvTime.setText(DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate1));
+            tvTop.setTextColor(getResources().getColor(R.color.colorGrayLight));
             Calendar calendar = Calendar.getInstance();
             datePickerDialog = DatePickerDialog.newInstance(EditActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
         } else if (400 == mEditType) {
@@ -109,12 +116,34 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
             tvTitle.setSelection(daysData.getTitle().length());
             tvTime.setText(daysData.getDate());
 
+            isTop = daysData.getIsTop();
+            if (daysData.getIsTop()) {
+                mSwitchView.setChecked(true);
+                tvTop.setTextColor(getResources().getColor(R.color.colorGray));
+            } else {
+                mSwitchView.setChecked(false);
+                tvTop.setTextColor(getResources().getColor(R.color.colorGrayLight));
+            }
+
             Calendar calendar = Calendar.getInstance();
             Date date = DateFormatUtil.convertStr2Date(daysData.getDate(), DateFormatUtil.sdfDate1);
             calendar.setTime(date);
             datePickerDialog = DatePickerDialog.newInstance(EditActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
         }
 
+        mSwitchView.setOnCheckedChangeListener(new SwitchView.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean isChecked) {
+                isTop =  isChecked;
+                ToastUtil.toastShortCenter(EditActivity.this, "isChecked-->" + isChecked);
+                if (isChecked) {
+                    tvTop.setTextColor(getResources().getColor(R.color.colorGray));
+                } else {
+                    tvTop.setTextColor(getResources().getColor(R.color.colorGrayLight));
+                }
+
+            }
+        });
     }
 
     @OnClick(R.id.id_days_edit_date_text)
@@ -140,7 +169,7 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
         data.setDate(strEventDate);
         data.setDays("1");
         data.setUnit("天");
-        data.setIsTop(false);
+        data.setIsTop(isTop);
 
         if (400 == mEditType) {
 //            DaysData tempData = readOne4DB(daysData.getId()).get(0);
@@ -153,6 +182,11 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
 //            writeOne2DB(tempData);
 
             deleteOne4DB(daysData.getId());
+        }
+
+        if (isTop) {
+            // 将所有isTop置为false
+            updateIsTop();
         }
 
         writeOne2DB(data);
@@ -200,6 +234,18 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
     private void deleteOne4DB(Long id) {
         final DaysDataDao dao = MyApplication.getDaoSession(this).getDaysDataDao();
         dao.deleteByKeyInTx(id);
+    }
+
+    private void updateIsTop() {
+        final DaysDataDao dao = MyApplication.getDaoSession(this).getDaysDataDao();
+        List<DaysData> list = dao.queryBuilder()
+                .orderAsc(DaysDataDao.Properties.Id)
+                .build().list();
+
+        for (DaysData daysData : list) {
+            daysData.setIsTop(false);
+            dao.update(daysData);
+        }
     }
 
     @Override
