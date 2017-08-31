@@ -135,7 +135,6 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void onCheckedChanged(View view, boolean isChecked) {
                 isTop =  isChecked;
-                ToastUtil.toastShortCenter(EditActivity.this, "isChecked-->" + isChecked);
                 if (isChecked) {
                     tvTop.setTextColor(getResources().getColor(R.color.colorGray));
                 } else {
