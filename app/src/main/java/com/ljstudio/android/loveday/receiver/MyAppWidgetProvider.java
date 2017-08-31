@@ -197,12 +197,19 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         while (it.hasNext()) {
             appID = ((Integer) it.next()).intValue();
 
-            int index = 0;
 //            int index = (new java.util.Random().nextInt(listDays.size()));
 //            if (DEBUG) Log.i(TAG, "onUpdate(): index=" + index);
 
+            DaysData data;
+            List<DaysData> list = readTop4DB(context);
+            if (list == null || 0 == list.size()) {
+                data = listDays.get(0);
+            } else {
+                data =  list.get(0);
+            }
+
             RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.layout_my_app_widget);
-            Date date = DateFormatUtil.convertStr2Date(listDays.get(index).getDate(), DateFormatUtil.sdfDate1);
+            Date date = DateFormatUtil.convertStr2Date(data.getDate(), DateFormatUtil.sdfDate1);
             if (1 == DateUtil.compareDate(date, new Date())) {
                 remoteView.setTextColor(R.id.id_widget_days, context.getResources().getColor(R.color.colorBlue));
                 remoteView.setTextColor(R.id.id_widget_date, context.getResources().getColor(R.color.colorBlue));
@@ -212,13 +219,23 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
             }
 
             int days = DateUtil.betweenDays(date, new Date());
-            remoteView.setTextViewText(R.id.id_widget_title, listDays.get(index).getTitle());
+            remoteView.setTextViewText(R.id.id_widget_title, data.getTitle());
             remoteView.setTextViewText(R.id.id_widget_days, String.valueOf(days) + "天");
-            remoteView.setTextViewText(R.id.id_widget_date, listDays.get(index).getDate());
+            remoteView.setTextViewText(R.id.id_widget_date, data.getDate());
 
             remoteView.setOnClickPendingIntent(R.id.id_widget_title, getPendingIntent(context, BUTTON_SHOW));
             appWidgetManager.updateAppWidget(appID, remoteView);
         }
+    }
+
+    private List<DaysData> readTop4DB(Context context) {
+        final DaysDataDao dao = MyApplication.getDaoSession(context).getDaysDataDao();
+        List<DaysData> list = dao.queryBuilder()
+                .where(DaysDataDao.Properties.IsTop.eq(true))
+                .orderAsc(DaysDataDao.Properties.Id)
+                .build().list();
+
+        return list;
     }
 
     private PendingIntent getPendingIntent(Context context, int buttonId) {
