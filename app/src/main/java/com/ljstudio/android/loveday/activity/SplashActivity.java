@@ -6,9 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
 import com.ljstudio.android.loveday.R;
+import com.ljstudio.android.loveday.utils.NetworkUtil;
 import com.ljstudio.android.loveday.views.fish.FishDrawableView;
 import com.ljstudio.android.loveday.views.particletextview.view.ParticleTextView;
 
@@ -30,6 +33,8 @@ public class SplashActivity extends AppCompatActivity {
     FishDrawableView fishDrawableView;
     @BindView((R.id.id_splash_layout))
     RelativeLayout bgLayout;
+    @BindView((R.id.id_splash_bg))
+    ImageView bgImage;
 
 
     @Override
@@ -74,10 +79,68 @@ public class SplashActivity extends AppCompatActivity {
 //            SplashActivity.this.finish();
 //        }
 
-        Calendar calendar = Calendar.getInstance();
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int type = getSeason(month);
-        setSeasonBg(type);
+        /**
+         * wifi is connected, get bg from bing else local image
+         */
+        if (NetworkUtil.isWifiAvailable(SplashActivity.this)) {
+            // http://api.dujin.org/bing/1366.php
+            String url = "http://api.dujin.org/bing/1920.php";
+            Glide.with(SplashActivity.this)
+                    .load(url)
+                    .into(bgImage);
+
+//            File filePath = getSDCardFolderPath("Download");
+//            if (!filePath.exists()) {
+//                filePath.mkdirs();
+//            }
+//
+//            String path = filePath.getAbsolutePath();
+//            String name = DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate1) + ".png";
+//            File file = new File(path, name);
+//            if (file.exists()) {
+////                Bitmap bitmap = BitmapFactory.decodeFile(path);
+//                bgLayout.setBackground(Drawable.createFromPath(path));
+//            } else {
+//                OkHttpUtils.get().url(url).build()
+//                        .execute(new FileCallBack(path, name) {
+//
+//                            @Override
+//                            public void onBefore(Request request, int id) {
+//                                super.onBefore(request, id);
+//                            }
+//
+//                            @Override
+//                            public void onAfter(int id) {
+//                                super.onAfter(id);
+//                            }
+//
+//                            @Override
+//                            public void inProgress(float progress, long total, int id) {
+//                                super.inProgress(progress, total, id);
+//                            }
+//
+//                            @Override
+//                            public boolean validateReponse(Response response, int id) {
+//                                return super.validateReponse(response, id);
+//                            }
+//
+//                            @Override
+//                            public void onError(Call call, Exception e, int id) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onResponse(File response, int id) {
+//                                bgLayout.setBackground(Drawable.createFromPath(response.getAbsolutePath()));
+//                            }
+//                        });
+//            }
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int type = getSeason(month);
+            setSeasonBg(type);
+        }
     }
 
     private int getSeason(int month) {
@@ -103,19 +166,24 @@ public class SplashActivity extends AppCompatActivity {
     private void setSeasonBg(int type) {
         switch (type) {
             case 1:
-                bgLayout.setBackgroundResource(R.mipmap.ic_spring);
+//                bgLayout.setBackgroundResource(R.mipmap.ic_spring);
+                bgImage.setImageResource(R.mipmap.ic_spring);
                 break;
             case 2:
-                bgLayout.setBackgroundResource(R.mipmap.ic_summer);
+//                bgLayout.setBackgroundResource(R.mipmap.ic_summer);
+                bgImage.setImageResource(R.mipmap.ic_summer);
                 break;
             case 3:
-                bgLayout.setBackgroundResource(R.mipmap.ic_autumn);
+//                bgLayout.setBackgroundResource(R.mipmap.ic_autumn);
+                bgImage.setImageResource(R.mipmap.ic_autumn);
                 break;
             case 4:
-                bgLayout.setBackgroundResource(R.mipmap.ic_winter);
+//                bgLayout.setBackgroundResource(R.mipmap.ic_winter);
+                bgImage.setImageResource(R.mipmap.ic_winter);
                 break;
             default:
-                bgLayout.setBackgroundResource(R.mipmap.ic_spring);
+//                bgLayout.setBackgroundResource(R.mipmap.ic_spring);
+                bgImage.setImageResource(R.mipmap.ic_spring);
                 break;
         }
     }

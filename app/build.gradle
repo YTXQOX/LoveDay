@@ -119,6 +119,11 @@ dependencies {
     compile 'net.sourceforge.jexcelapi:jxl:2.6.12'  // https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl
     compile 'com.tapadoo.android:alerter:1.0.4'
 
+    compile 'com.zhy:okhttputils:2.6.2'
+
+    compile 'com.github.bumptech.glide:glide:4.1.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.1.1'
+
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
     compile 'com.github.nekocode:TriangulationDrawable:1.1'
     compile 'com.github.lzyzsd.randomcolor:library:1.0.0'

@@ -22,7 +22,7 @@ public class FishDrawable extends Drawable {
     public static final float HEAD_RADIUS = 30;
     public static final float TOTAL_LENGTH = 6.79f * HEAD_RADIUS;
     protected static final float BODY_LENGHT = HEAD_RADIUS * 3.2f; //第一节身体长度
-    private static final String TAG = "Jcs_Fishsss";
+    private static final String TAG = "FishDrawable";
     private static final int BODY_ALPHA = 220;
     private static final int OTHER_ALPHA = 160;
     private static final int FINS_ALPHA = 100;

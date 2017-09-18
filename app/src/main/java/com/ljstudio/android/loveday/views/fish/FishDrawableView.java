@@ -140,6 +140,8 @@ public class FishDrawableView extends RelativeLayout {
         ivFish = new ImageView(context);
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         ivFish.setLayoutParams(params);
+        ivFish.setX((float)Math.random() * (mScreenWidth - 36));
+        ivFish.setY((float)Math.random() * (mScreenHeight - 36));
         fishDrawable = new FishDrawable(context);
         ivFish.setImageDrawable(fishDrawable);
 
