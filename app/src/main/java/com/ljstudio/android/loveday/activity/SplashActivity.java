@@ -2,7 +2,6 @@ package com.ljstudio.android.loveday.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
@@ -38,7 +37,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -83,10 +82,15 @@ public class SplashActivity extends AppCompatActivity {
          * wifi is connected, get bg from bing else local image
          */
         if (NetworkUtil.isWifiAvailable(SplashActivity.this)) {
-            // http://api.dujin.org/bing/1366.php
-            String url = "http://api.dujin.org/bing/1920.php";
+            String url = "https://cn.bing.com/az/hprichbg/rb/Sparrowhawk_ZH-CN9288842659_1920x1080.jpg";
+//            String url = "http://api.dujin.org/bing/1366.php";
+//            String url = "http://api.dujin.org/bing/1920.php";
+
             Glide.with(SplashActivity.this)
                     .load(url)
+//                    .centerCrop()
+//                    .placeholder(R.mipmap.ic_spring)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(bgImage);
 
 //            File filePath = getSDCardFolderPath("Download");
