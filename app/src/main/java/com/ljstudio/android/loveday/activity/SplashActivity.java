@@ -82,8 +82,8 @@ public class SplashActivity extends AppCompatActivity {
          * wifi is connected, get bg from bing else local image
          */
         if (NetworkUtil.isWifiAvailable(SplashActivity.this)) {
-            String url = "https://cn.bing.com/az/hprichbg/rb/Sparrowhawk_ZH-CN9288842659_1920x1080.jpg";
-//            String url = "http://api.dujin.org/bing/1366.php";
+//            String url = "https://cn.bing.com/az/hprichbg/rb/Sparrowhawk_ZH-CN9288842659_1920x1080.jpg";
+            String url = "http://api.dujin.org/bing/1366.php";
 //            String url = "http://api.dujin.org/bing/1920.php";
 
             Glide.with(SplashActivity.this)
