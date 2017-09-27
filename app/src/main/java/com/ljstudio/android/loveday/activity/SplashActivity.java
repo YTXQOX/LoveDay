@@ -1,6 +1,7 @@
 package com.ljstudio.android.loveday.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
@@ -10,14 +11,23 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.ljstudio.android.loveday.R;
+import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.NetworkUtil;
 import com.ljstudio.android.loveday.views.fish.FishDrawableView;
 import com.ljstudio.android.loveday.views.particletextview.view.ParticleTextView;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.FileCallBack;
 
+import java.io.File;
 import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static com.ljstudio.android.loveday.utils.FileUtil.getSDCardFolderPath;
 
 /**
  * Created by guoren on 2017/5/10 11:07
@@ -86,64 +96,67 @@ public class SplashActivity extends AppCompatActivity {
             String url = "http://api.dujin.org/bing/1366.php";
 //            String url = "http://api.dujin.org/bing/1920.php";
 
-            Glide.with(SplashActivity.this)
-                    .load(url)
-//                    .centerCrop()
-//                    .placeholder(R.mipmap.ic_spring)
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(bgImage);
+            Glide.with(SplashActivity.this).load(url).into(bgImage);
 
-//            File filePath = getSDCardFolderPath("Download");
-//            if (!filePath.exists()) {
-//                filePath.mkdirs();
-//            }
-//
-//            String path = filePath.getAbsolutePath();
-//            String name = DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate1) + ".png";
-//            File file = new File(path, name);
-//            if (file.exists()) {
-////                Bitmap bitmap = BitmapFactory.decodeFile(path);
-//                bgLayout.setBackground(Drawable.createFromPath(path));
-//            } else {
-//                OkHttpUtils.get().url(url).build()
-//                        .execute(new FileCallBack(path, name) {
-//
-//                            @Override
-//                            public void onBefore(Request request, int id) {
-//                                super.onBefore(request, id);
-//                            }
-//
-//                            @Override
-//                            public void onAfter(int id) {
-//                                super.onAfter(id);
-//                            }
-//
-//                            @Override
-//                            public void inProgress(float progress, long total, int id) {
-//                                super.inProgress(progress, total, id);
-//                            }
-//
-//                            @Override
-//                            public boolean validateReponse(Response response, int id) {
-//                                return super.validateReponse(response, id);
-//                            }
-//
-//                            @Override
-//                            public void onError(Call call, Exception e, int id) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onResponse(File response, int id) {
-//                                bgLayout.setBackground(Drawable.createFromPath(response.getAbsolutePath()));
-//                            }
-//                        });
-//            }
+//            download(url);
         } else {
             Calendar calendar = Calendar.getInstance();
             int month = calendar.get(Calendar.MONTH) + 1;
             int type = getSeason(month);
             setSeasonBg(type);
+        }
+    }
+
+    /**
+     * 下载并显示
+     * @param url
+     */
+    private void download(String url) {
+        File filePath = getSDCardFolderPath("Download");
+        if (!filePath.exists()) {
+            filePath.mkdirs();
+        }
+
+        String path = filePath.getAbsolutePath();
+        String name = DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate1) + ".png";
+        File file = new File(path, name);
+        if (file.exists()) {
+//                Bitmap bitmap = BitmapFactory.decodeFile(path);
+            bgLayout.setBackground(Drawable.createFromPath(path));
+        } else {
+            OkHttpUtils.get().url(url).build()
+                    .execute(new FileCallBack(path, name) {
+
+                        @Override
+                        public void onBefore(Request request, int id) {
+                            super.onBefore(request, id);
+                        }
+
+                        @Override
+                        public void onAfter(int id) {
+                            super.onAfter(id);
+                        }
+
+                        @Override
+                        public void inProgress(float progress, long total, int id) {
+                            super.inProgress(progress, total, id);
+                        }
+
+                        @Override
+                        public boolean validateReponse(Response response, int id) {
+                            return super.validateReponse(response, id);
+                        }
+
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+
+                        }
+
+                        @Override
+                        public void onResponse(File response, int id) {
+                            bgLayout.setBackground(Drawable.createFromPath(response.getAbsolutePath()));
+                        }
+                    });
         }
     }
 
