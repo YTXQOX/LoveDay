@@ -503,7 +503,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!filePath.exists()) {
                     filePath.mkdirs();
                 }
-                final File file = new File(filePath.getAbsolutePath(), "LoveDay.xls");
+                final File file = new File(filePath.getAbsolutePath(), "LoveDay.xlsx");
                 if (file.exists()) {
                     MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this);
                     builder.title("温馨提示");
@@ -595,7 +595,7 @@ public class MainActivity extends AppCompatActivity {
 
 //            String fileName = DateFormatUtil.getCurrentDateTime(DateFormatUtil.sdfDate60) + "_" +
 //                    DateFormatUtil.getCurrentDateTime(DateFormatUtil.sdfTime40);
-            file = new File(filePath.getAbsolutePath(), "LoveDay.xls");
+            file = new File(filePath.getAbsolutePath(), "LoveDay.xlsx");
             if (file.exists()) {
                 FileUtil.deleteDir(file);
             }

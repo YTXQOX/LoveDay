@@ -32,6 +32,7 @@
 
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.DetailActivity" />
+        <activity android:name=".activity.SwipeDetailActivity" />
         <activity android:name=".activity.EditActivity" />
 
         <activity android:name=".activity.TestActivity" />
