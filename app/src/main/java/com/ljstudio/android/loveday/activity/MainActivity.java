@@ -282,7 +282,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+//                Intent intent = new Intent(MainActivity.this, SwipeDetailActivity.class);
                 intent.putExtra(DetailActivity.ID, listDays.get(position).getId());
+                intent.putExtra(DetailActivity.POSITION, position);
                 startActivity(intent);
             }
         });
@@ -431,6 +433,8 @@ public class MainActivity extends AppCompatActivity {
             listDays.addAll(listDaysFuture);
             listDays.addAll(listDaysPrevious);
         }
+
+        setIsInstall();
 
 //        SystemOutUtil.sysOut("listDays.size()-->" + listDays.size());
         initTopData();

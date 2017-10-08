@@ -62,6 +62,7 @@ import io.reactivex.schedulers.Schedulers;
 public class DetailActivity extends AppCompatActivity {
 
     public static final String ID = "id";
+    public static final String POSITION = "position";
     public static final String RESULT_ID = "RESULT_ID";
     private static final int REQUEST_CODE_EDIT = 1024;
 

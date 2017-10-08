@@ -1,6 +1,5 @@
 package com.ljstudio.android.loveday.activity;
 
-import android.animation.Animator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -10,34 +9,29 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.ljstudio.android.loveday.BuildConfig;
 import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
-import com.ljstudio.android.loveday.constants.Constant;
+import com.ljstudio.android.loveday.adapter.SwipeDetailAdapter;
 import com.ljstudio.android.loveday.entity.DaysData;
+import com.ljstudio.android.loveday.entity.DetailData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
-import com.ljstudio.android.loveday.utils.DateUtil;
-import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.ScreenShotUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
-import com.ljstudio.android.loveday.views.fallingview.FallingView;
-import com.ljstudio.android.loveday.views.fonts.FontsManager;
+import com.ljstudio.android.loveday.views.swipefling.SwipeFlingAdapterView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -50,7 +44,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.nekocode.triangulation.TriangulationDrawable;
-import es.dmoral.toasty.Toasty;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -59,27 +52,22 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class SwipeDetailActivity extends AppCompatActivity {
+public class SwipeDetailActivity extends AppCompatActivity implements SwipeFlingAdapterView.onFlingListener,
+        SwipeFlingAdapterView.OnItemClickListener, View.OnClickListener {
 
     public static final String ID = "id";
+    public static final String POSITION = "position";
     public static final String RESULT_ID = "RESULT_ID";
     private static final int REQUEST_CODE_EDIT = 1024;
 
-    @BindView(R.id.id_detail_toolbar)
+    @BindView(R.id.id_swipe_detail_toolbar)
     Toolbar toolbar;
-    @BindView(R.id.id_detail_days_title)
-    TextView tvTitle;
-
-    @BindView(R.id.id_detail_days_layout)
-    LinearLayout layoutDays;
-    @BindView(R.id.id_detail_days_days)
-    TextView tvDays;
-    @BindView(R.id.id_detail_days_start)
-    TextView tvStart;
-    @BindView(R.id.id_detail_layout)
+    @BindView(R.id.id_swipe_detail_layout)
     RelativeLayout bgLayout;
-    @BindView(R.id.id_detail_falling_view)
-    FallingView fallingView;
+    @BindView(R.id.id_swipe_detail_swipe_view)
+    SwipeFlingAdapterView swipeFlingAdapterView;
+
+    private List<DetailData> listDetailData = new ArrayList<>();
 
     private List<DaysData> listDays = new ArrayList<>();
     private DaysData daysData;
@@ -87,11 +75,18 @@ public class SwipeDetailActivity extends AppCompatActivity {
     private Disposable mDisposable;
     private TriangulationDrawable triangulationDrawable;
 
+    private SwipeDetailAdapter swipeDetailAdapter;
+    private int cardWidth;
+    private int cardHeight;
+
+    private Long id;
+    private int position;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_swipe_detail);
 
         ButterKnife.bind(this);
 
@@ -110,102 +105,71 @@ public class SwipeDetailActivity extends AppCompatActivity {
 
         setStatusBar(ContextCompat.getColor(this, R.color.colorPrimary));
 
-        Long id = getIntent().getLongExtra(ID, -1);
-        initData(id);
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        float density = dm.density;
+        cardWidth = (int) (dm.widthPixels - (2 * 18 * density));
+        cardHeight = (int) (dm.heightPixels - (338 * density));
+
+        id = getIntent().getLongExtra(ID, -1);
+        position = getIntent().getIntExtra(POSITION, -1);
+
+        swipeDetailAdapter = new SwipeDetailAdapter(SwipeDetailActivity.this, listDetailData, cardWidth, cardHeight);
+        if (swipeFlingAdapterView != null) {
+            swipeFlingAdapterView.setIsNeedSwipe(true);
+            swipeFlingAdapterView.setFlingListener(this);
+            swipeFlingAdapterView.setOnItemClickListener(this);
+
+            swipeFlingAdapterView.setAdapter(swipeDetailAdapter);
+        }
+
+        initOneData(id);
+        initAllData();
     }
 
-    private void initData(Long id) {
+    private void initOneData(Long id) {
         listDays.clear();
         listDays = readOne4DB(id);
         daysData = listDays.get(0);
 
-        tvTitle.setText(daysData.getTitle());
+        SystemOutUtil.sysOut("daysData.toString()====>" + daysData.toString());
+    }
 
-        Date date = DateFormatUtil.convertStr2Date(daysData.getDate(), DateFormatUtil.sdfDate1);
-        int days = DateUtil.betweenDays(date, new Date());
-        tvDays.setText(String.valueOf(days));
+    private void initAllData() {
+        List<DaysData> list = readAll4DB();
+        list.remove(daysData);
+        list.add(0, daysData);
 
-        FontsManager.initFormAssets(this, "fonts/gtw.ttf");
-        FontsManager.changeFonts(tvDays);
+        for (DaysData data : list) {
+            DetailData detailData1 = new DetailData();
 
-        if (1 == DateUtil.compareDate(date, new Date())) {
-            tvDays.setTextColor(getResources().getColor(R.color.colorBlue));
-            tvStart.setText("目标日：" + daysData.getDate());
-        } else {
-            tvDays.setTextColor(getResources().getColor(R.color.colorAccent));
-            tvStart.setText("起始日：" + daysData.getDate());
+            Date date = DateFormatUtil.convertStr2Date(daysData.getDate(), DateFormatUtil.sdfDate1);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int type = getSeason(month);
+
+            detailData1.setId(data.getId());
+            detailData1.setMonthBackground(getMonthBg(month));
+            detailData1.setFalling(getFalling(type));
+            detailData1.setTitle(data.getTitle());
+            detailData1.setDate(data.getDate());
+            detailData1.setDays(data.getDays());
+            detailData1.setUnit(data.getUnit());
+            detailData1.setTop(data.getIsTop());
+
+            listDetailData.add(detailData1);
         }
 
-//        RandomColor randomColor = new RandomColor();
-//        int color = randomColor.randomColor();
-//        triangulationDrawable = new TriangulationDrawable(color);
-//        triangulationDrawable = new TriangulationDrawable(0xbbfbfbfb);
-//        tvDays.setBackground(triangulationDrawable);
-
+        Date date = DateFormatUtil.convertStr2Date(listDetailData.get(0).getDate(), DateFormatUtil.sdfDate1);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         int month = calendar.get(Calendar.MONTH) + 1;
-
-        if (BuildConfig.LOG_DEBUG) {
-            Log.i("DetailActivity", month + "");
-        }
-
         int type = getSeason(month);
         setSeasonBg(type);
-        setMonthBg(month);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            tvDays.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Animator animator = ViewAnimationUtils.createCircularReveal(tvDays,
-                                tvDays.getWidth() / 2, tvDays.getHeight() / 2, 0, tvDays.getWidth());
-                        animator.setDuration(2222);
-                        animator.start();
-                    }
-                }
-            });
-        }
+        SystemOutUtil.sysOut("listDetailData.get(0).toString()====>" + listDetailData.get(0).toString());
 
-        tvStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String strContent;
-                String strButton;
-                String strInfo;
-                boolean isColorfulBg = PreferencesUtil.getPrefBoolean(SwipeDetailActivity.this, Constant.COLORFUL_BG, false);
-                if (isColorfulBg) {
-                    strContent = "即将关闭首页炫彩界面，嘤嘤嘤~~~";
-                    strButton = "关闭";
-                    strInfo = "已关闭炫彩界面，将在下次启动时生效";
-                } else {
-                    strContent = "即将开启首页炫彩界面，吼吼吼~~~";
-                    strButton = "开启";
-                    strInfo = "已开启炫彩界面，将在下次启动时生效";
-                }
-
-                showColorfulBg(isColorfulBg, strContent, strButton, strInfo);
-            }
-        });
-    }
-
-    private void showColorfulBg(final boolean isColorfulBg, String content, String btn, final String info) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(SwipeDetailActivity.this);
-        builder.title("我是第二彩蛋");
-        builder.content(content);
-        builder.positiveText(btn);
-        builder.onPositive(new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                PreferencesUtil.setPrefBoolean(SwipeDetailActivity.this, Constant.COLORFUL_BG, !isColorfulBg);
-                dialog.dismiss();
-
-                Toasty.info(SwipeDetailActivity.this, info).show();
-            }
-        });
-
-        builder.build().show();
+        swipeDetailAdapter.addAll(listDetailData);
     }
 
     @Override
@@ -409,71 +373,83 @@ public class SwipeDetailActivity extends AppCompatActivity {
         return type;
     }
 
+    private int getFalling(int type) {
+        switch (type) {
+            case 1:
+                return R.mipmap.ic_spring_flower;
+            case 2:
+                return R.mipmap.ic_summer_flower;
+            case 3:
+                return R.mipmap.ic_autumn_leaf;
+            case 4:
+                return R.mipmap.ic_winter_snow;
+            default:
+                return R.mipmap.ic_spring_flower;
+        }
+    }
+
+    private int getSeasonBg(int type) {
+        switch (type) {
+            case 1:
+                return R.mipmap.ic_spring;
+            case 2:
+                return R.mipmap.ic_summer;
+            case 3:
+                return R.mipmap.ic_autumn;
+            case 4:
+                return R.mipmap.ic_winter;
+            default:
+                return R.mipmap.ic_spring;
+        }
+    }
+
+    private int getMonthBg(int month) {
+        switch (month) {
+            case 1:
+                return R.mipmap.google_calendar_01;
+            case 2:
+                return R.mipmap.google_calendar_02;
+            case 3:
+                return R.mipmap.google_calendar_03;
+            case 4:
+                return R.mipmap.google_calendar_04;
+            case 5:
+                return R.mipmap.google_calendar_05;
+            case 6:
+                return R.mipmap.google_calendar_06;
+            case 7:
+                return R.mipmap.google_calendar_07;
+            case 8:
+                return R.mipmap.google_calendar_08;
+            case 9:
+                return R.mipmap.google_calendar_09;
+            case 10:
+                return R.mipmap.google_calendar_10;
+            case 11:
+                return R.mipmap.google_calendar_11;
+            case 12:
+                return R.mipmap.google_calendar_12;
+            default:
+                return R.mipmap.google_calendar_01;
+        }
+    }
+
     private void setSeasonBg(int type) {
         switch (type) {
             case 1:
                 bgLayout.setBackgroundResource(R.mipmap.ic_spring);
-                fallingView.setImageResource(R.mipmap.ic_spring_flower);
                 break;
             case 2:
                 bgLayout.setBackgroundResource(R.mipmap.ic_summer);
-                fallingView.setImageResource(R.mipmap.ic_summer_flower);
                 break;
             case 3:
                 bgLayout.setBackgroundResource(R.mipmap.ic_autumn);
-                fallingView.setImageResource(R.mipmap.ic_autumn_leaf);
                 break;
             case 4:
                 bgLayout.setBackgroundResource(R.mipmap.ic_winter);
-                fallingView.setImageResource(R.mipmap.ic_winter_snow);
                 break;
             default:
                 bgLayout.setBackgroundResource(R.mipmap.ic_spring);
-                fallingView.setImageResource(R.mipmap.ic_spring_flower);
-                break;
-        }
-    }
-
-    private void setMonthBg(int month) {
-        switch (month) {
-            case 1:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_01);
-                break;
-            case 2:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_02);
-                break;
-            case 3:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_03);
-                break;
-            case 4:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_04);
-                break;
-            case 5:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_05);
-                break;
-            case 6:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_06);
-                break;
-            case 7:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_07);
-                break;
-            case 8:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_08);
-                break;
-            case 9:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_09);
-                break;
-            case 10:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_10);
-                break;
-            case 11:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_11);
-                break;
-            case 12:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_12);
-                break;
-            default:
-                layoutDays.setBackgroundResource(R.mipmap.google_calendar_01);
                 break;
         }
     }
@@ -492,9 +468,13 @@ public class SwipeDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CODE_EDIT) {
-                long mResultType = data.getLongExtra(RESULT_ID, -1);
+                long mResultId = data.getLongExtra(RESULT_ID, -1);
 
-                initData(mResultType);
+                initOneData(mResultId);
+
+                swipeDetailAdapter.clear();
+                listDetailData.clear();
+                initAllData();
             }
         }
     }
@@ -509,5 +489,64 @@ public class SwipeDetailActivity extends AppCompatActivity {
     protected void onStop() {
 //        triangulationDrawable.stop();
         super.onStop();
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public void onItemClicked(MotionEvent event, View v, Object dataObject) {
+
+    }
+
+    @Override
+    public void removeFirstObjectInAdapter() {
+        swipeDetailAdapter.remove(0);
+
+        Date date = DateFormatUtil.convertStr2Date(listDetailData.get(0).getDate(), DateFormatUtil.sdfDate1);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int type = getSeason(month);
+        setSeasonBg(type);
+
+        daysData.setId(listDetailData.get(0).getId());
+        daysData.setTitle(listDetailData.get(0).getTitle());
+        daysData.setDate(listDetailData.get(0).getDate());
+        daysData.setDays(listDetailData.get(0).getDays());
+        daysData.setUnit(listDetailData.get(0).getUnit());
+        daysData.setIsTop(listDetailData.get(0).getIsTop());
+
+        SystemOutUtil.sysOut("daysData.toString()====>" + daysData.toString());
+        SystemOutUtil.sysOut("listDetailData.get(0).toString()====>" + listDetailData.get(0).toString());
+    }
+
+    @Override
+    public void onLeftCardExit(Object dataObject) {
+        SystemOutUtil.sysOut("onLeftCardExit====>" + ((DetailData) dataObject).getTitle());
+    }
+
+    @Override
+    public void onRightCardExit(Object dataObject) {
+        SystemOutUtil.sysOut("onRightCardExit====>" + ((DetailData) dataObject).getTitle());
+    }
+
+    @Override
+    public void onAdapterAboutToEmpty(int itemsInAdapter) {
+        if (itemsInAdapter == 3) {
+            initAllData();
+        }
+    }
+
+    @Override
+    public void onScroll(float progress, float scrollXProgress) {
+        SystemOutUtil.sysOut("progress====>" + progress + "====scrollXProgress====>" + scrollXProgress);
+
+        if (100.0f == progress) {
+
+        }
+
     }
 }

@@ -87,4 +87,15 @@ public class DaysData {
         this.isTop = isTop;
     }
 
+    @Override
+    public String toString() {
+        return "DaysData{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", date='" + date + '\'' +
+                ", days='" + days + '\'' +
+                ", unit='" + unit + '\'' +
+                ", isTop=" + isTop +
+                '}';
+    }
 }

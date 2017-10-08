@@ -3,7 +3,8 @@
     xmlns:swipe="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/id_swipe_detail_toolbar"
@@ -11,11 +12,23 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary" />
 
-    <com.ljstudio.android.loveday.views.swipefling.SwipeFlingAdapterView
-        android:id="@+id/id_swipe_detail_swipe_view"
+    <RelativeLayout
+        android:id="@+id/id_swipe_detail_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        swipe:max_visible="4"
-        swipe:min_adapter_stack="4"
-        swipe:y_offset_step="28dp" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/id_swipe_detail_toolbar"
+        android:layout_gravity="center_horizontal"
+        android:background="@mipmap/ic_summer"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <com.ljstudio.android.loveday.views.swipefling.SwipeFlingAdapterView
+            android:id="@+id/id_swipe_detail_swipe_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            swipe:max_visible="4"
+            android:layout_centerInParent="true"
+            swipe:min_adapter_stack="4"
+            swipe:y_offset_step="28dp" />
+    </RelativeLayout>
 </RelativeLayout>
