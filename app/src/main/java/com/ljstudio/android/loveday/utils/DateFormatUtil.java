@@ -83,7 +83,7 @@ public class DateFormatUtil {
 		return date;
 	}
 
-	public static String convertTimestamp2Str(SimpleDateFormat sdf, long timestamp) {
+	public static String convertTimestamp2Str(long timestamp, SimpleDateFormat sdf) {
 		return sdf.format(new Date(timestamp));
 	}
 

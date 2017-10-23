@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -576,9 +577,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 final File file = new File(filePath.getAbsolutePath(), "LoveDay.xlsx");
                 if (file.exists()) {
+                    String strDateTime = DateFormatUtil.convertTimestamp2Str(file.lastModified(), DateFormatUtil.sdfDateTime20);
                     MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this);
                     builder.title("温馨提示");
-                    builder.content("恢复数据后，将清除现有的所有数据，替换为恢复数据");
+                    String content = "恢复 " + "<font color=#E61A6B>" + strDateTime + "</font>" + " 数据后，将清除现有的所有数据，替换为所恢复的数据";
+                    builder.content(Html.fromHtml(content));
                     builder.positiveText("恢复数据");
                     builder.negativeText("取消");
                     builder.onPositive(new MaterialDialog.SingleButtonCallback() {
