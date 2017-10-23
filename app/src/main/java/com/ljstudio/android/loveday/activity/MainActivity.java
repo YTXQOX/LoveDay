@@ -143,13 +143,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        /**
+         * Refactoring RxJava(RxAndroid)
+         */
         if (checkIsFirst()) {
             File filePath = getSDCardFolderPath("Export");
             if (!filePath.exists()) {
                 filePath.mkdirs();
             }
-            File file = new File(filePath.getAbsolutePath(), "LoveDay.xls");
+            File file = new File(filePath.getAbsolutePath(), "LoveDay.xlsx");
             if (file.exists()) {
                 SystemOutUtil.sysOut("file.getAbsolutePath()-->" + file.getAbsolutePath());
 
@@ -157,6 +159,71 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 testData();
             }
+
+//            Observable<List<DaysData>> local = Observable.create(new ObservableOnSubscribe<List<DaysData>>() {
+//                @Override
+//                public void subscribe(ObservableEmitter<List<DaysData>> e) throws Exception {
+//                    File filePath = getSDCardFolderPath("Export");
+//                    if (!filePath.exists()) {
+//                        filePath.mkdirs();
+//                    }
+//                    File file = new File(filePath.getAbsolutePath(), "LoveDay.xlsx");
+//                    if (file.exists()) {
+//                        SystemOutUtil.sysOut("file.getAbsolutePath()-->" + file.getAbsolutePath());
+//
+//                        onImport(file.getAbsolutePath());
+//
+//                        e.onNext(listDays);
+//                    } else {
+//                        e.onComplete();
+//                    }
+//                }
+//            });
+
+//            Observable<List<DaysData>> origin = Observable.create(new ObservableOnSubscribe<List<DaysData>>() {
+//                @Override
+//                public void subscribe(ObservableEmitter<List<DaysData>> e) throws Exception {
+//                    testData();
+//                }
+//            });
+
+//            Observable.concat(local, origin)
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Observer<List<DaysData>>() {
+//                        @Override
+//                        public void onSubscribe(Disposable d) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onNext(List<DaysData> daysDatas) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onError(Throwable e) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onComplete() {
+//
+//                        }
+//                    });
+
+//            Observable.concat(local, origin)
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Consumer<List<DaysData>>() {
+//                        @Override
+//                        public void accept(@io.reactivex.annotations.NonNull List<DaysData> daysDatas) throws Exception {
+//                        }
+//                    }, new Consumer<Throwable>() {
+//                        @Override
+//                        public void accept(@io.reactivex.annotations.NonNull Throwable throwable) throws Exception {
+//                        }
+//                    });
         } else {
             resetData();
         }

@@ -35,7 +35,7 @@
         <activity android:name=".activity.SwipeDetailActivity" />
         <activity android:name=".activity.EditActivity" />
 
-        <activity android:name=".activity.TestActivity" />
+        <activity android:name=".test.TestActivity" />
 
         <receiver android:name="com.ljstudio.android.loveday.receiver.MyAppWidgetProvider">
             <intent-filter>

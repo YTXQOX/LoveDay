@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">倒数日</string>
+    <string name="app_name">时光机</string>
 
-    <string name="easter_egg_content">我是倒数日，又叫恋时光，记录时光，记录美\n\n </string>
+    <string name="easter_egg_content">我是时光机，又叫倒数日，也叫恋时光，记录时光，记录美\n\n </string>
 </resources>
