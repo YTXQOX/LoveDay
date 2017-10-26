@@ -8,7 +8,7 @@ def releaseTime() {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.ljstudio.android.loveday"
@@ -47,23 +47,42 @@ android {
         }
 
         applicationVariants.all { variant ->
-            variant.outputs.each { output ->
+            variant.outputs.all { output ->
+//            variant.outputs.each { output ->
                 def outputFile = output.outputFile
                 if (outputFile != null && outputFile.name.endsWith('.apk')) {
                     //  apk名称为 LoveDay-V1.0.0_2015-12-31_online.apk
-                    def fileName = "LoveDay-V${versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
-                    output.outputFile = new File(outputFile.parent, fileName)
+                    def fileName = outputFile.name.replace("app", "LoveDay-V${versionName}_${releaseTime()}")
+//                    outputFileName = new File(outputFile.parent, fileName)
+                    outputFileName = new File(fileName)
+
+//                    def fileName = "LoveDay-V${versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+//                    output.outputFile = new File(outputFile.parent, fileName)
                 }
             }
         }
     }
 
+    // Specifies a flavor dimension.
+    flavorDimensions "channel"
+
     productFlavors {
+        apk {
+            manifestPlaceholders = [APK_CHANNEL: "apk"]
+
+            buildConfigField "String", "DOMAIN_ADD", "\"https://online.domain.com/\""
+            versionName getReleaseVersionName()
+
+            dimension "channel"
+        }
+
         online {
             manifestPlaceholders = [APK_CHANNEL: "online"]
 
             buildConfigField "String", "DOMAIN_ADD", "\"https://online.domain.com/\""
             versionName getReleaseVersionName()
+
+            dimension "channel"
         }
 
         admin {
@@ -71,6 +90,8 @@ android {
 
             buildConfigField "String", "DOMAIN_ADD", "\"https://admin.domain.com/\""
             versionName getDebugVersionName()
+
+            dimension "channel"
         }
 
         atest {
@@ -78,6 +99,8 @@ android {
 
             buildConfigField "String", "DOMAIN_ADD", "\"https://offline.domain.com/\""
             versionName getDebugVersionName()
+
+            dimension "channel"
         }
     }
 
@@ -103,7 +126,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
 
-    compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.jakewharton:butterknife:8.6.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
     compile 'org.greenrobot:greendao:3.2.2'
@@ -114,7 +137,7 @@ dependencies {
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
 
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.code.gson:gson:2.8.1'
 
     compile 'net.sourceforge.jexcelapi:jxl:2.6.12'  // https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl
     compile 'com.tapadoo.android:alerter:1.0.4'
@@ -132,6 +155,6 @@ dependencies {
     compile 'com.afollestad.material-dialogs:core:0.9.4.4'
     compile 'com.afollestad.material-dialogs:commons:0.9.4.4'
 
-    compile "io.reactivex.rxjava2:rxjava:2.0.7"
+    compile "io.reactivex.rxjava2:rxjava:2.1.0"
     compile "io.reactivex.rxjava2:rxandroid:2.0.1"
 }

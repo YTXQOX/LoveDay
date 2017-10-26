@@ -144,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        String str = "";
+        str.replaceAll("\\\"", "\"");
+
         /**
          * Refactoring RxJava(RxAndroid)
          */
