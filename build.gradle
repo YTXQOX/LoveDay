@@ -27,7 +27,7 @@ allprojects {
 
 ext {
     versionName = "1.5.3 (AT062013)"
-    debugNum = "1020"
+    debugNum = "20171026"
 }
 
 def getDebugVersionName() {
