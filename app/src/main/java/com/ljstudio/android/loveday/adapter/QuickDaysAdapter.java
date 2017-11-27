@@ -27,6 +27,7 @@ public class QuickDaysAdapter extends BaseQuickAdapter<DaysData, BaseViewHolder>
     protected void convert(BaseViewHolder helper, DaysData item) {
 
         helper.setText(R.id.id_days_item_title, item.getTitle());
+        helper.setText(R.id.id_days_item_date, item.getDate());
 
         Date date = DateFormatUtil.convertStr2Date(item.getDate(), DateFormatUtil.sdfDate1);
         if (1 == DateUtil.compareDate(date, new Date())) {
@@ -42,8 +43,10 @@ public class QuickDaysAdapter extends BaseQuickAdapter<DaysData, BaseViewHolder>
         boolean isColorfulBg = PreferencesUtil.getPrefBoolean(mContext, Constant.COLORFUL_BG, false);
         if (isColorfulBg) {
             helper.setTextColor(R.id.id_days_item_title, ContextCompat.getColor(mContext, R.color.colorGrayLighter));
+            helper.setTextColor(R.id.id_days_item_date, ContextCompat.getColor(mContext, R.color.colorGrayLighter));
         } else {
             helper.setTextColor(R.id.id_days_item_title, ContextCompat.getColor(mContext, R.color.colorGray));
+            helper.setTextColor(R.id.id_days_item_date, ContextCompat.getColor(mContext, R.color.colorGray));
         }
     }
 }

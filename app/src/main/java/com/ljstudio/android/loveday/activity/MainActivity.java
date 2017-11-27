@@ -541,7 +541,14 @@ public class MainActivity extends AppCompatActivity {
         builder.title("我是彩蛋");
         builder.content(getString(R.string.easter_egg_content) + VersionUtil.getVersionName(MainActivity.this));
         builder.positiveText("确定");
+        builder.negativeText("取消");
         builder.onPositive(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                dialog.dismiss();
+            }
+        });
+        builder.onNegative(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                 dialog.dismiss();

@@ -195,6 +195,7 @@ public class DetailActivity extends AppCompatActivity {
         builder.title("我是第二彩蛋");
         builder.content(content);
         builder.positiveText(btn);
+        builder.negativeText("取消");
         builder.onPositive(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -202,6 +203,12 @@ public class DetailActivity extends AppCompatActivity {
                 dialog.dismiss();
 
                 Toasty.info(DetailActivity.this, info).show();
+            }
+        });
+        builder.onNegative(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                dialog.dismiss();
             }
         });
 
