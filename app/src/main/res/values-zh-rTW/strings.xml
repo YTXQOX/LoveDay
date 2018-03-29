@@ -8,7 +8,11 @@
     <string name="menu_recovery">恢復記錄</string>
     <string name="menu_setting">設置</string>
     <string name="apps">應用程式</string>
-
+    <string name="menu_show_sys_app">顯示系統應用</string>
+    <string name="menu_hidden_sys_app">隱藏系統應用</string>
+    <string name="loading">加載中...</string>
+    <string name="input">輸入</string>
+    <string name="show">展示</string>
     <string name="hint">「天喜至魚」科技（廈門分公司）</string>
 
 </resources>

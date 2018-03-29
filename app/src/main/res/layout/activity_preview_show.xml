@@ -4,6 +4,7 @@
     android:id="@+id/id_show_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/colorWhite">
 
     <android.support.v7.widget.Toolbar
@@ -60,7 +61,7 @@
                         android:id="@+id/id_preview_show_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Input"
+                        android:hint="@string/input"
                         android:imeOptions="actionUnspecified"
                         android:inputType="text"
                         android:maxLines="1"
@@ -129,6 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:padding="8dp"
                     android:layout_marginStart="24dp"
                     android:background="@color/colorGrayLight" />
             </LinearLayout>
@@ -169,7 +171,7 @@
                 android:background="@color/colorPrimary"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Follow"
+                android:text="@string/show"
                 android:textColor="@color/colorWhite"
                 android:textSize="24sp" />
         </LinearLayout>

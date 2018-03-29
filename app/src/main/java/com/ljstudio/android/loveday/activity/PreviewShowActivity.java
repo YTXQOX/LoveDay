@@ -4,15 +4,19 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -25,6 +29,7 @@ import com.ljstudio.android.loveday.utils.ScreenUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.views.ColorPickView;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +38,8 @@ public class PreviewShowActivity extends AppCompatActivity {
 
     public static final String CONTENT = "content";
 
+    @BindView(R.id.id_preview_show_toolbar)
+    Toolbar toolbar;
     @BindView(R.id.id_preview_show_content)
     TextView tvPreviewContent;
     @BindView(R.id.id_preview_show_text_input_layout)
@@ -64,6 +71,20 @@ public class PreviewShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_preview_show);
 
         ButterKnife.bind(this);
+
+        toolbar.setTitle("全屏预览");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
+        toolbar.setNavigationIcon(R.mipmap.ic_action_back);
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PreviewShowActivity.this.finish();
+            }
+        });
+
+        setStatusBar(ContextCompat.getColor(this, R.color.colorPrimary));
 
         strContent = getIntent().getStringExtra(CONTENT);
 
@@ -285,6 +306,16 @@ public class PreviewShowActivity extends AppCompatActivity {
         }
 
         dialogFragment.show(fragmentTransaction, "DialogFragment");
+    }
+
+    private void setStatusBar(int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            SystemBarTintManager tintManager = new SystemBarTintManager(this);
+            tintManager.setStatusBarTintEnabled(true);
+            tintManager.setNavigationBarTintEnabled(false);
+            tintManager.setTintColor(color);
+        }
     }
 
 }

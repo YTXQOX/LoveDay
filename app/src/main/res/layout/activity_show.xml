@@ -12,6 +12,6 @@
         android:layout_height="match_parent"
         app:marqueeview_repet_type="repet_continuous"
         app:marqueeview_text_size="15"
-        app:marqueeview_text_speed="2" />
+        app:marqueeview_text_speed="3" />
 
 </LinearLayout>
