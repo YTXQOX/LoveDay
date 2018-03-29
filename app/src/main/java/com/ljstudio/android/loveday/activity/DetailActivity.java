@@ -36,6 +36,8 @@ import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.ScreenShotUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
+import com.ljstudio.android.loveday.views.HoldPressHelper;
+import com.ljstudio.android.loveday.views.SprayView;
 import com.ljstudio.android.loveday.views.fallingview.FallingView;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -68,6 +70,8 @@ public class DetailActivity extends AppCompatActivity {
 
     @BindView(R.id.id_detail_toolbar)
     Toolbar toolbar;
+    @BindView(R.id.id_detail_spray_view)
+    SprayView sprayView;
     @BindView(R.id.id_detail_days_title)
     TextView tvTitle;
     @BindView(R.id.id_detail_days_layout)
@@ -112,6 +116,25 @@ public class DetailActivity extends AppCompatActivity {
 
         Long id = getIntent().getLongExtra(ID, -1);
         initData(id);
+
+        HoldPressHelper.addHoldPressListener(findViewById(R.id.id_detail_days_title), new HoldPressHelper.OnHoldPressListener() {
+            @Override
+            public void onTouchDown(View v) {
+
+            }
+
+            @Override
+            public void onHold(View v) {
+                sprayView.makeBody();
+                sprayView.startScroller();
+            }
+
+            @Override
+            public void onTouchUp(View v) {
+
+            }
+        }, 300);
+
     }
 
     private void initData(Long id) {
@@ -122,9 +145,17 @@ public class DetailActivity extends AppCompatActivity {
         tvTitle.setText(daysData.getTitle());
 
         Date date = DateFormatUtil.convertStr2Date(daysData.getDate(), DateFormatUtil.sdfDate1);
-        int days = DateUtil.betweenDays(date, new Date());
+        final int days = DateUtil.betweenDays(date, new Date());
         tvDays.setText(String.valueOf(days));
 
+        tvDays.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailActivity.this, PreviewShowActivity.class);
+                intent.putExtra(PreviewShowActivity.CONTENT, tvTitle.getText().toString());
+                startActivity(intent);
+            }
+        });
         FontsManager.initFormAssets(this, "fonts/gtw.ttf");
         FontsManager.changeFonts(tvDays);
 

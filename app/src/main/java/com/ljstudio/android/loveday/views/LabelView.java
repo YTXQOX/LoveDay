@@ -17,14 +17,14 @@ import com.ljstudio.android.loveday.R;
 public class LabelView extends View {
 
     Paint mTextPaint;
-    int mTextColor ;
-    float mTextSize ;
+    int mTextColor;
+    float mTextSize;
     float mTextHeight;
     float mTextWidth;
     int mTextStyle;
 
     Paint mNumPaint;
-    int mNumColor ;
+    int mNumColor;
     float mNumSize;
     float mNumHeight;
     float mNumWidth;
@@ -46,10 +46,8 @@ public class LabelView extends View {
     int width;
     int height;
 
-    public static final int DEGREES_LEFT=-45;
-    public static final int DEGREES_RIGHT=45;
-
-
+    public static final int DEGREES_LEFT = -45;
+    public static final int DEGREES_RIGHT = 45;
 
 
     public LabelView(Context context) {
@@ -69,18 +67,18 @@ public class LabelView extends View {
         mCenterPadding = ta.getDimension(R.styleable.LabelTextView_labelCenterPadding, dp2px(3));
         mBottomPadding = ta.getDimension(R.styleable.LabelTextView_labelBottomPadding, dp2px(3));
 
-        mBackGroundColor=ta.getColor(R.styleable.LabelTextView_backgroundColor, Color.parseColor("#66000000"));
-        mTextColor=ta.getColor(R.styleable.LabelTextView_textColor, Color.WHITE);
-        mNumColor=ta.getColor(R.styleable.LabelTextView_numColor, Color.WHITE);
+        mBackGroundColor = ta.getColor(R.styleable.LabelTextView_backgroundColor, Color.parseColor("#66000000"));
+        mTextColor = ta.getColor(R.styleable.LabelTextView_textColor, Color.WHITE);
+        mNumColor = ta.getColor(R.styleable.LabelTextView_numColor, Color.WHITE);
 
-        mTextSize=ta.getDimension(R.styleable.LabelTextView_textSize,sp2px(8));
-        mNumSize=ta.getDimension(R.styleable.LabelTextView_numSize,sp2px(11));
+        mTextSize = ta.getDimension(R.styleable.LabelTextView_textSize, sp2px(8));
+        mNumSize = ta.getDimension(R.styleable.LabelTextView_numSize, sp2px(11));
 
-        mText=ta.getString(R.styleable.LabelTextView_text);
-        mNum=ta.getString(R.styleable.LabelTextView_num);
+        mText = ta.getString(R.styleable.LabelTextView_text);
+        mNum = ta.getString(R.styleable.LabelTextView_num);
 
-        mTextStyle=ta.getInt(R.styleable.LabelTextView_textStyle,0);
-        mNumStyle=ta.getInt(R.styleable.LabelTextView_numStyle,2);
+        mTextStyle = ta.getInt(R.styleable.LabelTextView_textStyle, 0);
+        mNumStyle = ta.getInt(R.styleable.LabelTextView_numStyle, 2);
 
         mDegrees = ta.getInt(R.styleable.LabelTextView_direction, 45);
 
@@ -102,13 +100,13 @@ public class LabelView extends View {
         invalidate();
     }
 
-    public void setText(String text){
-        mText=text;
+    public void setText(String text) {
+        mText = text;
         resetTextStatus();
         invalidate();
     }
 
-    public void setBackGroundColor(int color){
+    public void setBackGroundColor(int color) {
         mTrianglePaint.setColor(color);
         invalidate();
     }
@@ -119,9 +117,9 @@ public class LabelView extends View {
         mTextPaint.setColor(mTextColor);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
         mTextPaint.setTextSize(mTextSize);
-        if (mTextStyle==1){
+        if (mTextStyle == 1) {
             mTextPaint.setTypeface(Typeface.SANS_SERIF);
-        }else if (mTextStyle==2){
+        } else if (mTextStyle == 2) {
             mTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
         }
     }
@@ -132,16 +130,16 @@ public class LabelView extends View {
         mNumPaint.setColor(mNumColor);
         mNumPaint.setTextAlign(Paint.Align.CENTER);
         mNumPaint.setTextSize(mNumSize);
-        if (mNumStyle==1){
+        if (mNumStyle == 1) {
             mNumPaint.setTypeface(Typeface.SANS_SERIF);
-        }else if (mNumStyle==2){
+        } else if (mNumStyle == 2) {
             mNumPaint.setTypeface(Typeface.DEFAULT_BOLD);
         }
     }
 
-    private void initTrianglePaint(){
+    private void initTrianglePaint() {
         //初始化绘制三角形背景的画笔
-        mTrianglePaint= new Paint(Paint.ANTI_ALIAS_FLAG);
+        mTrianglePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTrianglePaint.setColor(mBackGroundColor);
     }
 
@@ -171,13 +169,13 @@ public class LabelView extends View {
 
         //位移和旋转canvas
         canvas.translate(0, (float) ((height * Math.sqrt(2)) - height));
-        if (mDegrees==DEGREES_LEFT){
+        if (mDegrees == DEGREES_LEFT) {
             canvas.rotate(mDegrees, 0, height);
-        }else if (mDegrees==DEGREES_RIGHT){
+        } else if (mDegrees == DEGREES_RIGHT) {
             canvas.rotate(mDegrees, width, height);
         }
 
-       //绘制三角形背景
+        //绘制三角形背景
         Path path = new Path();
         path.moveTo(0, height);
         path.lineTo(width / 2, 0);
@@ -198,8 +196,8 @@ public class LabelView extends View {
         height = (int) (mTopPadding + mCenterPadding + mBottomPadding + mTextHeight + mNumHeight);
         width = 2 * height;
         //控件的真正高度，勾股定理...
-        int realHeight= (int) (height * Math.sqrt(2));
-        setMeasuredDimension(width,realHeight);
+        int realHeight = (int) (height * Math.sqrt(2));
+        setMeasuredDimension(width, realHeight);
     }
 
     public int dp2px(float dpValue) {

@@ -1,0 +1,6 @@
+ext.signing = [
+        storeFile : file("../loveday.jks"),
+        keyAlias : "loveday",
+        storePassword : "lj123456",
+        keyPassword : "lj123456789",
+]

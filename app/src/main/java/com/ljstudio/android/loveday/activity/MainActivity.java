@@ -1,5 +1,6 @@
 package com.ljstudio.android.loveday.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,8 +84,13 @@ public class MainActivity extends AppCompatActivity {
     TextView tvTopTitle;
     @BindView(R.id.id_main_top_date)
     TextView tvTopDate;
+
     @BindView(R.id.id_main_top_days)
     TextView tvTopDays;
+    @BindView(R.id.id_main_top_days_unit_layout)
+    LinearLayout llDaysAndUnit;
+//    MultiScrollNumber tvTopDays;
+
     @BindView(R.id.id_main_top_unit)
     TextView tvTopUnit;
     @BindView(R.id.id_main_recycler_view)
@@ -107,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
     private long mClickTime3 = 0;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        labelView.setOnClickListener(new View.OnClickListener() {
 //            @Override
-//            public void onClick(View view) {
+//            public void onClickCopy(View view) {
 //                showEasterEgg();
 
 //                Intent intent = new Intent(MainActivity.this, TestActivity.class);
@@ -139,7 +147,15 @@ public class MainActivity extends AppCompatActivity {
         labelView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                onClick(event, "easter_egg");
+                onClick(event, "easter_egg", 1000);
+                return false;
+            }
+        });
+
+        llDaysAndUnit.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                onClick(event, "apps", 1001);
                 return false;
             }
         });
@@ -236,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         FontsManager.changeFonts(this);
     }
 
-    private void onClick(MotionEvent event, String name) {
+    private void onClick(MotionEvent event, String name, int type) {
         mClickTime3 = mClickTime2;
         mClickTime2 = mClickTime1;
         mClickTime1 = event.getEventTime();
@@ -244,8 +260,10 @@ public class MainActivity extends AppCompatActivity {
             // 三击 先取消双击单击的post
             if (doubleClick != null)
                 mHandler.removeCallbacks(doubleClick);
+
             if (singleClick != null)
                 mHandler.removeCallbacks(singleClick);
+
             tripleClick = new TripleClick(name);
             mHandler.post(tripleClick);
             // 防止连按四下多次执行三击操作
@@ -254,8 +272,11 @@ public class MainActivity extends AppCompatActivity {
             // 双击 先取消单击的post
             if (singleClick != null)
                 mHandler.removeCallbacks(singleClick);
-//            doubleClick = new DoubleClick(name);
-//            mHandler.postDelayed(doubleClick, 300);
+
+            if (1001 == type) {
+                doubleClick = new DoubleClick(name, type);
+                mHandler.postDelayed(doubleClick, 300);
+            }
         } else {
             // 单击
 //            singleClick = new SingleClick(name);
@@ -284,14 +305,18 @@ public class MainActivity extends AppCompatActivity {
      */
     class DoubleClick implements Runnable {
         String str;
+        int type;
 
-        DoubleClick(String name) {
+        DoubleClick(String name, int type) {
             this.str = str;
+            this.type = type;
         }
 
         @Override
         public void run() {
-
+            if (1001 == type) {
+                go2Apps();
+            }
         }
     }
 
@@ -367,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
         if (list == null || 0 == list.size()) {
             data = listDays.get(0);
         } else {
-            data =  list.get(0);
+            data = list.get(0);
         }
 
         tvTopTitle.setText(data.getTitle());
@@ -377,16 +402,22 @@ public class MainActivity extends AppCompatActivity {
             tvTopDate.setText("目标日：" + data.getDate());
 
             tvTopDays.setTextColor(getResources().getColor(R.color.colorBlue));
+//            tvTopDays.setTextColors(new int[]{R.color.colorBlue});
+
             tvTopUnit.setTextColor(getResources().getColor(R.color.colorBlue));
         } else {
             tvTopDate.setText("起始日：" + data.getDate());
 
             tvTopDays.setTextColor(getResources().getColor(R.color.colorAccent));
+//            tvTopDays.setTextColors(new int[]{R.color.colorAccent});
+
             tvTopUnit.setTextColor(getResources().getColor(R.color.colorAccent));
         }
 
         int days = DateUtil.betweenDays(date, new Date());
         tvTopDays.setText(String.valueOf(days));
+//        tvTopDays.setNumber(days);
+
         tvTopUnit.setText(data.getUnit());
     }
 
@@ -536,6 +567,11 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void go2Apps() {
+        Intent intent = new Intent(MainActivity.this, AppsActivity.class);
+        startActivity(intent);
+    }
+
     private void showEasterEgg() {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(MainActivity.this);
         builder.title("我是彩蛋");
@@ -611,6 +647,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toasty.error(MainActivity.this, "没有备份记录可恢复").show();
                 }
+            } else if (id == R.id.id_action_setting) {
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
             }
 
             return true;

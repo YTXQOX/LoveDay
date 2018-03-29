@@ -1,7 +1,9 @@
 package com.ljstudio.android.loveday.utils;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -9,7 +11,10 @@ import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.ljstudio.android.loveday.R;
+
 import java.lang.reflect.Method;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -336,4 +341,70 @@ public final class NetworkUtil {
             return null;
         }
     }
+
+    public static boolean checkNetworkConnection(final Context context) {
+        boolean flag = false;
+        final ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connMgr.getActiveNetworkInfo() != null) {
+            flag = connMgr.getActiveNetworkInfo().isAvailable();
+        }
+
+        if(!flag) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setIcon(R.mipmap.ic_launcher);
+            builder.setTitle("网络提示信息");
+            builder.setMessage("无网络连接,请先设置网络连接!");
+            //Cancel
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            //Setting
+            builder.setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
+//					Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                    context.startActivity(intent);
+                }
+            });
+            builder.create();
+            builder.show();
+        }
+        return flag;
+    }
+
+    public static boolean checkNetworkOnly(final Context context) {
+        boolean flag = false;
+        final ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connMgr.getActiveNetworkInfo() != null) {
+            flag = connMgr.getActiveNetworkInfo().isAvailable();
+        }
+        return flag;
+    }
+
+    public static String getIPAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+//		        if (!inetAddress.isLoopbackAddress()) {
+                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+//		    	if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet6Address) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            Log.e("LOG_TAG", ex.toString());
+        }
+        return null;
+    }
+
 }
+
+
+

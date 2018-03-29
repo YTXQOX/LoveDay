@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -29,16 +28,17 @@ public class ActionBarHelper {
             Log.e(TAG, "activity或 typeface等于空!");
             return;
         }
-        if (activity instanceof ActionBarActivity) {
-            try {
-                android.support.v7.app.ActionBar actionBar = ((ActionBarActivity) activity).getSupportActionBar();
-                if (actionBar != null)
-                    setTitle(actionBar, typeface, actionBar.getTitle().toString());
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
 
-        }else if(activity instanceof AppCompatActivity){
+//        if (activity instanceof ActionBarActivity) {
+//            try {
+//                android.support.v7.app.ActionBar actionBar = ((ActionBarActivity) activity).getSupportActionBar();
+//                if (actionBar != null)
+//                    setTitle(actionBar, typeface, actionBar.getTitle().toString());
+//            } catch (Exception e) {
+//                Log.e(TAG, e.toString());
+//            }
+//        } else
+        if (activity instanceof AppCompatActivity) {
             try {
                 android.support.v7.app.ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
                 if (actionBar != null)
@@ -68,15 +68,15 @@ public class ActionBarHelper {
      * @param title    标题
      */
     public static void setTitle(Activity activity, Typeface typeface, String title) {
-        if (activity instanceof ActionBarActivity) {
-            try {
-                android.support.v7.app.ActionBar actionBar = ((ActionBarActivity) activity).getSupportActionBar();
-                setTitle(actionBar, typeface, title);
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-
-        } else if (activity instanceof Activity) {
+//        if (activity instanceof ActionBarActivity) {
+//            try {
+//                android.support.v7.app.ActionBar actionBar = ((ActionBarActivity) activity).getSupportActionBar();
+//                setTitle(actionBar, typeface, title);
+//            } catch (Exception e) {
+//                Log.e(TAG, e.toString());
+//            }
+//        } else
+        if (activity instanceof Activity) {
             try {
                 ActionBar actionBar = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

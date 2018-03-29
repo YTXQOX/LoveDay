@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="date"
-            android:textColor="@color/colorGray"
+            android:textColor="@color/colorGrayLight"
             android:textSize="12sp" />
     </LinearLayout>
 
