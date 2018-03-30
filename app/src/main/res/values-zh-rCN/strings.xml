@@ -13,6 +13,9 @@
     <string name="loading">加载中...</string>
     <string name="input">输入</string>
     <string name="show">展示</string>
+    <string name="choose_color">选择颜色</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
     <string name="hint">「天喜至鱼」科技（厦门分公司）</string>
-    加载中...
+
 </resources>

@@ -23,17 +23,23 @@ public class ColorPickView extends LinearLayout {
     }
 
     //设置的默认颜色
-    private static final int[] PICKCOLORBAR_COLORS = new int[]{Color.rgb(255, 0, 0),
+    private static final int[] PICK_COLOR_BAR_COLORS = new int[]{Color.rgb(255, 0, 0),
             Color.rgb(255, 255, 0), Color.rgb(0, 255, 0),
             Color.rgb(0, 255, 255), Color.rgb(0, 0, 255)};
+
+//    private static final int[] PICK_COLOR_BAR_COLORS = new int[]{Color.rgb(0, 0, 0),
+//            Color.rgb(0, 0, 255), Color.rgb(0, 255, 0),
+//            Color.rgb(0, 255, 255), Color.rgb(255, 255, 255)};
+
     //每个颜色的位置
-    private static final float[] PICKCOLORBAR_POSITIONS = new float[]{0f, 0.25f, 0.5f, 0.75f, 1f};
-    private static final float[] SUBBAR_POSITIONS = new float[]{0f, 1f};
+    private static final float[] PICK_COLOR_BAR_POSITIONS = new float[]{0f, 0.25f, 0.5f, 0.75f, 1f};
+    private static final float[] SUB_BAR_POSITIONS = new float[]{0f, 1f};
 
     private int[] mSubColors = new int[]{Color.BLACK, Color.RED};
     private SeekBar mMainBar;
     private SeekBar mSubBar;
-    private int mSubPostion = 0;
+    private int mSubPosition = 0;
+
 
     public ColorPickView(Context context) {
         super(context);
@@ -78,7 +84,7 @@ public class ColorPickView extends LinearLayout {
             @Override
             public Shader resize(int width, int height) {
                 LinearGradient linearGradient = new LinearGradient(0, 0, width, height,
-                        PICKCOLORBAR_COLORS, PICKCOLORBAR_POSITIONS, Shader.TileMode.REPEAT);
+                        PICK_COLOR_BAR_COLORS, PICK_COLOR_BAR_POSITIONS, Shader.TileMode.REPEAT);
                 return linearGradient;
             }
         };
@@ -95,7 +101,7 @@ public class ColorPickView extends LinearLayout {
             @Override
             public Shader resize(int width, int height) {
                 LinearGradient linearGradient = new LinearGradient(0, 0, width, height,
-                        mSubColors, SUBBAR_POSITIONS, Shader.TileMode.REPEAT);
+                        mSubColors, SUB_BAR_POSITIONS, Shader.TileMode.REPEAT);
                 return linearGradient;
             }
         };
@@ -119,9 +125,9 @@ public class ColorPickView extends LinearLayout {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float radio = (float) progress / mSubBar.getMax();
-                int color = getColor(radio, PICKCOLORBAR_COLORS, PICKCOLORBAR_POSITIONS);
+                int color = getColor(radio, PICK_COLOR_BAR_COLORS, PICK_COLOR_BAR_POSITIONS);
                 setSubBarBg(color);
-                listener.moveBar(getColor(mSubPostion, mSubColors, SUBBAR_POSITIONS));
+                listener.moveBar(getColor(mSubPosition, mSubColors, SUB_BAR_POSITIONS));
             }
 
             @Override
@@ -138,9 +144,9 @@ public class ColorPickView extends LinearLayout {
         mSubBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mSubPostion = progress;
+                mSubPosition = progress;
                 float radio = (float) progress / mSubBar.getMax();
-                listener.moveBar(getColor(radio, mSubColors, SUBBAR_POSITIONS));
+                listener.moveBar(getColor(radio, mSubColors, SUB_BAR_POSITIONS));
             }
 
             @Override
@@ -160,7 +166,7 @@ public class ColorPickView extends LinearLayout {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float radio = (float) progress / mSubBar.getMax();
-                setSubBarBg(getColor(radio, PICKCOLORBAR_COLORS, PICKCOLORBAR_POSITIONS));
+                setSubBarBg(getColor(radio, PICK_COLOR_BAR_COLORS, PICK_COLOR_BAR_POSITIONS));
             }
 
             @Override

@@ -52,6 +52,8 @@ public class PreviewShowActivity extends AppCompatActivity {
     View vBg;
     @BindView(R.id.id_preview_show_font)
     Spinner spinnerFont;
+    @BindView(R.id.id_preview_show_speed)
+    SeekBar seekBarSpeed;
     @BindView(R.id.id_preview_show_size)
     SeekBar seekBarSize;
     @BindView(R.id.id_preview_show_button)
@@ -63,6 +65,7 @@ public class PreviewShowActivity extends AppCompatActivity {
     private static int mBg;
     private String[] mItems;
     private String font;
+    private float speed = 5.0f;
 
 
     @Override
@@ -151,10 +154,28 @@ public class PreviewShowActivity extends AppCompatActivity {
             }
         });
 
+        seekBarSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                speed = progress / 10.0f + 2;
+                SystemOutUtil.sysOut("speedValue==>" + speed);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         seekBarSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float spValue = progress / 2 * 1.0f;
+                float spValue = progress / 2 * 1.0f + 5;
                 SystemOutUtil.sysOut("spValue==>" + spValue);
 
                 float pxValue = ScreenUtil.sp2px(PreviewShowActivity.this, spValue);
@@ -184,6 +205,7 @@ public class PreviewShowActivity extends AppCompatActivity {
                 intent.putExtra(ShowActivity.SIZE, tvPreviewContent.getTextSize());
                 intent.putExtra(ShowActivity.COLOR, mColor);
                 intent.putExtra(ShowActivity.BG, mBg);
+                intent.putExtra(ShowActivity.SPEED, speed);
                 startActivity(intent);
             }
         });

@@ -18,6 +18,7 @@ public class ShowActivity extends AppCompatActivity {
     public static final String SIZE = "size";
     public static final String COLOR = "color";
     public static final String BG = "bg";
+    public static final String SPEED = "speed";
 
     @BindView(R.id.id_show_content_marquee)
     MarqueeView tvContent;
@@ -29,6 +30,7 @@ public class ShowActivity extends AppCompatActivity {
     private float size;
     private int color;
     private int bg;
+    private float fSpeed;
 
 
     @Override
@@ -43,20 +45,23 @@ public class ShowActivity extends AppCompatActivity {
         size = getIntent().getFloatExtra(SIZE, -1.0f);
         color = getIntent().getIntExtra(COLOR, -1);
         bg = getIntent().getIntExtra(BG, -1);
+        fSpeed = getIntent().getFloatExtra(SPEED, 3.0f);
 
         SystemOutUtil.sysOut("content==>" + content);
         SystemOutUtil.sysOut("font==>" + font);
         SystemOutUtil.sysOut("size==>" + size);
         SystemOutUtil.sysOut("color==>" + color);
         SystemOutUtil.sysOut("bg==>" + bg);
+        SystemOutUtil.sysOut("fSpeed==>" + fSpeed);
 
         FontsManager.initFormAssets(ShowActivity.this, "fonts/" + font + ".ttf");
         FontsManager.changeFonts(tvContent);
 
         llShow.setBackgroundColor(bg);
         tvContent.setContent(content);
-        tvContent.setTextSize(size / 1.5f);
+        tvContent.setTextSize(size / 1.8f);
         tvContent.setTextColor(color, true);
+        tvContent.setTextSpeed(fSpeed);
     }
 
 }
