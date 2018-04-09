@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:text="title"
             android:textColor="@color/colorGray"
+            android:transitionName="detail_title"
             android:textSize="18sp" />
 
         <TextView
@@ -28,6 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="date"
+            android:transitionName="detail_date"
             android:textColor="@color/colorGrayLight"
             android:textSize="12sp" />
     </LinearLayout>
@@ -52,6 +54,7 @@
             android:textColor="@color/colorWhite"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:transitionName="detail_days"
             android:typeface="monospace" />
 
         <TextView

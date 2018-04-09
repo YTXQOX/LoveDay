@@ -1,6 +1,7 @@
 package com.ljstudio.android.loveday.activity;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -36,6 +38,7 @@ import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.entity.ExcelDaysData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
+import com.ljstudio.android.loveday.test.PPangActivity;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.DateUtil;
 import com.ljstudio.android.loveday.utils.FileUtil;
@@ -43,7 +46,6 @@ import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 import com.ljstudio.android.loveday.utils.VersionUtil;
-import com.ljstudio.android.loveday.utils.WaterMarkUtil;
 import com.ljstudio.android.loveday.views.LabelView;
 import com.ljstudio.android.loveday.views.excel.ExcelManager;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
@@ -72,6 +74,7 @@ import cn.nekocode.triangulation.TriangulationDrawable;
 import es.dmoral.toasty.Toasty;
 
 import static com.ljstudio.android.loveday.utils.FileUtil.getSDCardFolderPath;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -163,9 +166,12 @@ public class MainActivity extends AppCompatActivity {
         tvTopTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String path = WaterMarkUtil.getImageFilePath("marry");
-                SystemOutUtil.sysOut("path==>" + path);
-                WaterMarkUtil.addWatermarkBitmap(MainActivity.this, WaterMarkUtil.getLocalBitmap(path),"仅限柒牌婚假专用", 0 ,0);
+                Intent intent = new Intent(MainActivity.this, PPangActivity.class);
+                startActivity(intent);
+
+//                String path = WaterMarkUtil.getImageFilePath("marry");
+//                SystemOutUtil.sysOut("path==>" + path);
+//                WaterMarkUtil.addWatermarkBitmap(MainActivity.this, WaterMarkUtil.getLocalBitmap(path),"仅限柒牌婚假专用", 0 ,0);
             }
         });
 
@@ -390,7 +396,14 @@ public class MainActivity extends AppCompatActivity {
 //                Intent intent = new Intent(MainActivity.this, SwipeDetailActivity.class);
                 intent.putExtra(DetailActivity.ID, listDays.get(position).getId());
                 intent.putExtra(DetailActivity.POSITION, position);
-                startActivity(intent);
+//                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
+//                        (MainActivity.this, view,"detail_title")
+//                        .toBundle());
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
+                        (MainActivity.this, Pair.create(view, "detail_title"), Pair.create(view, "detail_date"), Pair.create(view, "detail_days"))
+                        .toBundle());
+//                (MainActivity.this, view, "detail_title")
+//                (MainActivity.this, Pair.create(view, "detail_date"), Pair.create(view, "detail_days"))
             }
         });
     }

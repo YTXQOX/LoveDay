@@ -49,6 +49,7 @@
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="title"
+                android:transitionName="detail_title"
                 android:textColor="@color/colorWhite"
                 android:textSize="32sp" />
 
@@ -66,6 +67,7 @@
                     android:gravity="center"
                     android:padding="48dp"
                     android:text="Days"
+                    android:transitionName="detail_days"
                     android:textColor="@color/colorAccent"
                     android:textSize="72sp" />
 
@@ -83,6 +85,7 @@
                     android:gravity="center"
                     android:padding="16dp"
                     android:text="start"
+                    android:transitionName="detail_date"
                     android:textColor="@color/colorWhite"
                     android:textSize="16sp" />
             </LinearLayout>

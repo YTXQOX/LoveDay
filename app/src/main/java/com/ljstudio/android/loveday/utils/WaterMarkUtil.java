@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Environment;
@@ -27,8 +28,9 @@ import java.util.Date;
  */
 public class WaterMarkUtil {
 
-    public static final String IMAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "LJSTUDIO" +
+        public static final String IMAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "LJSTUDIO" +
             File.separator + "Android" + File.separator + "LoveDay" + File.separator;
+//    public static final String IMAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "DOWNLOAD" + File.separator;
 
     /**
      * 设置水印图片在左上角
@@ -277,29 +279,39 @@ public class WaterMarkUtil {
         canvas.drawBitmap(bitmap, src, dst, photoPaint);//将photo 缩放或则扩大到 dst使用的填充区photoPaint
 
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);//设置画笔
-        textPaint.setTextSize(destWidth / 20);//字体大小
+        textPaint.setTextSize(destWidth / 10);//字体大小
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTypeface(Typeface.DEFAULT_BOLD);//采用默认的宽度
         textPaint.setAntiAlias(true);  //抗锯齿
         textPaint.setStrokeWidth(3);
         textPaint.setAlpha(15);
         textPaint.setStyle(Paint.Style.STROKE); //空心
-        textPaint.setColor(Color.WHITE);//采用的颜色
+        textPaint.setColor(Color.GRAY);//采用的颜色
         textPaint.setShadowLayer(1f, 0f, 3f, Color.LTGRAY);
 //        textPaint.setShadowLayer(3f, 1, 1,getResources().getColor(android.R.color.white));//影音的设置
-        canvas.drawText(str, destWidth / 2, destHeight - 45, textPaint);//绘制上去字，开始未知x,y采用那只笔绘制
+
+        Path mPath = new Path();
+//        RectF rect = new RectF(destWidth / 4, destHeight * 3 / 4, destWidth * 3 / 4, destHeight / 4);
+//        mPath.addOval(rect, Path.Direction.CW);
+        mPath.moveTo(destWidth / 4, destHeight * 3 / 4);
+        mPath.lineTo(destWidth * 3 / 4, destHeight / 4);
+
+//        canvas.drawTextOnPath(str, mPath, 0, 0, textPaint);
+        canvas.drawText(str, destWidth / 2, destHeight / 4, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
+        canvas.drawText(str, destWidth / 2, destHeight / 2, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
+        canvas.drawText(str, destWidth / 2, destHeight * 7  / 8, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
+
         canvas.save(Canvas.ALL_SAVE_FLAG);
         canvas.restore();
         bitmap.recycle();
 
+        ToastUtil.toastShortCenter(context, "增加水印成功");
         return saveMyBitmap(icon, String.valueOf(new Date().getTime())); //保存至文件
 //        return true;
     }
 
     /**
-     * 判断是否存在存储空间	 *
-     *
-     * @return
+     * 判断是否存在存储空间
      */
     private static boolean isExitSDCard() {
         return Environment.getExternalStorageState().equals(
@@ -324,6 +336,9 @@ public class WaterMarkUtil {
         return myCaptureFile;
     }
 
+    /**
+     *
+     */
     public static String getImageFilePath(String imageName) {
         File dirFile = new File(IMAGE_PATH);
         if (!dirFile.exists()) {
@@ -343,6 +358,9 @@ public class WaterMarkUtil {
         return myCaptureFile.getAbsolutePath();
     }
 
+    /**
+     *
+     */
     public static Bitmap getLocalBitmap(String path) {
         try {
             FileInputStream fis = new FileInputStream(path);

@@ -46,6 +46,7 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/ShowTheme" />
         <activity android:name=".test.TestActivity" />
+        <activity android:name=".test.PPangActivity" />
 
         <receiver android:name=".receiver.MyAppWidgetProvider">
             <intent-filter>
