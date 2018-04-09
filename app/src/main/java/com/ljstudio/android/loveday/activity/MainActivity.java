@@ -43,6 +43,7 @@ import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 import com.ljstudio.android.loveday.utils.VersionUtil;
+import com.ljstudio.android.loveday.utils.WaterMarkUtil;
 import com.ljstudio.android.loveday.views.LabelView;
 import com.ljstudio.android.loveday.views.excel.ExcelManager;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
@@ -84,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
     TextView tvTopTitle;
     @BindView(R.id.id_main_top_date)
     TextView tvTopDate;
-
     @BindView(R.id.id_main_top_days)
     TextView tvTopDays;
     @BindView(R.id.id_main_top_days_unit_layout)
@@ -157,6 +157,15 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 onClick(event, "apps", 1001);
                 return false;
+            }
+        });
+
+        tvTopTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String path = WaterMarkUtil.getImageFilePath("marry");
+                SystemOutUtil.sysOut("path==>" + path);
+                WaterMarkUtil.addWatermarkBitmap(MainActivity.this, WaterMarkUtil.getLocalBitmap(path),"仅限柒牌婚假专用", 0 ,0);
             }
         });
 
