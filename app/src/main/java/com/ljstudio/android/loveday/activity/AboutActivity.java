@@ -21,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class SettingActivity extends AppCompatActivity {
+public class AboutActivity extends AppCompatActivity {
 
     @BindView(R.id.id_setting_toolbar)
     Toolbar toolbar;
@@ -34,14 +34,14 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+        setContentView(R.layout.activity_about);
 
         ButterKnife.bind(this);
 
         setStatusBarColor(R.color.colorPrimary);
 //        setImmerseStatusBar(R.color.colorPrimary);
 
-        toolbar.setTitle(R.string.menu_setting);
+        toolbar.setTitle(R.string.about);
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
         toolbar.setNavigationIcon(R.mipmap.ic_action_back);
         setSupportActionBar(toolbar);
@@ -49,11 +49,11 @@ public class SettingActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SettingActivity.this.finish();
+                AboutActivity.this.finish();
             }
         });
 
-        tvVersion.setText(VersionUtil.getVersionName(SettingActivity.this).toString());
+        tvVersion.setText(VersionUtil.getVersionName(AboutActivity.this).toString());
 
         updateLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,9 +65,9 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void checkUpdate() {
-        ToastUtil.toastShortCenter(SettingActivity.this,"当前版本已是最新");
-//        if (NetworkUtil.checkNetworkOnly(SettingActivity.this)) {
-//            UpdateHelperUtil.getInstance(SettingActivity.this).check4UpdateLeanCloud(SettingActivity.this, true, Constant.DB_UPDATE, true);
+        ToastUtil.toastShortCenter(AboutActivity.this,"当前版本已是最新");
+//        if (NetworkUtil.checkNetworkOnly(AboutActivity.this)) {
+//            UpdateHelperUtil.getInstance(AboutActivity.this).check4UpdateLeanCloud(AboutActivity.this, true, Constant.DB_UPDATE, true);
 //        }
     }
 

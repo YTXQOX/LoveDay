@@ -3,6 +3,7 @@ package com.ljstudio.android.loveday;
 import android.app.Application;
 import android.content.Context;
 
+import com.avos.avoscloud.AVOSCloud;
 import com.ljstudio.android.loveday.greendao.DaoMaster;
 import com.ljstudio.android.loveday.greendao.DaoSession;
 
@@ -39,5 +40,9 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        String strLeanCloudClientKey = "KJmQymXrI63PviBgF9rxrAO0";
+        // 初始化参数依次为 this, AppId, AppKey（辣椒APP）
+        AVOSCloud.initialize(this, "jBe28RManShl1crwcAlfD5zt-gzGzoHsz", strLeanCloudClientKey);
     }
 }

@@ -16,6 +16,9 @@
     <string name="choose_color">选择颜色</string>
     <string name="cancel">取消</string>
     <string name="confirm">确定</string>
-    <string name="hint">「天喜至鱼」科技（厦门分公司）</string>
+    <string name="hint">「天喜至鱼」科技</string>
+    <string name="settings">设置</string>
+    <string name="about">关于</string>
+    <string name="welfare">福利</string>
 
 </resources>

@@ -16,7 +16,10 @@
     <string name="choose_color">Choose color</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="welfare">Welfare</string>
 
-    <string name="hint">「天喜至鱼」科技（厦门分公司）</string>
+    <string name="hint">「TianXiZhiYu」Tech.</string>
 
 </resources>

@@ -38,7 +38,6 @@ import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.entity.ExcelDaysData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
-import com.ljstudio.android.loveday.test.PPangActivity;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.DateUtil;
 import com.ljstudio.android.loveday.utils.FileUtil;
@@ -46,6 +45,7 @@ import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 import com.ljstudio.android.loveday.utils.VersionUtil;
+import com.ljstudio.android.loveday.utils.WaterMarkUtil;
 import com.ljstudio.android.loveday.views.LabelView;
 import com.ljstudio.android.loveday.views.excel.ExcelManager;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
@@ -166,12 +166,12 @@ public class MainActivity extends AppCompatActivity {
         tvTopTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PPangActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(MainActivity.this, PPangActivity.class);
+//                startActivity(intent);
 
-//                String path = WaterMarkUtil.getImageFilePath("marry");
-//                SystemOutUtil.sysOut("path==>" + path);
-//                WaterMarkUtil.addWatermarkBitmap(MainActivity.this, WaterMarkUtil.getLocalBitmap(path),"仅限柒牌婚假专用", 0 ,0);
+                String path = WaterMarkUtil.getImageFilePath("marry");
+                SystemOutUtil.sysOut("path==>" + path);
+                WaterMarkUtil.addWatermarkBitmap(MainActivity.this, WaterMarkUtil.getLocalBitmap(path),"仅限办理居住证使用", 0 ,0);
             }
         });
 
@@ -671,7 +671,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else if (id == R.id.id_action_setting) {
                 Intent intent = new Intent();
-                intent.setClass(MainActivity.this, SettingActivity.class);
+                intent.setClass(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
 

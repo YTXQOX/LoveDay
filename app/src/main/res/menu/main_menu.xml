@@ -16,19 +16,19 @@
         android:icon="@mipmap/ic_action_output"
         android:orderInCategory="101"
         android:title="@string/menu_output"
-        app:showAsAction="always" />
+        app:showAsAction="never|withText" />
 
     <item
         android:id="@+id/id_action_recovery"
         android:icon="@mipmap/ic_action_recovery"
         android:orderInCategory="102"
         android:title="@string/menu_recovery"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never|withText" />
 
     <item
         android:id="@+id/id_action_setting"
         android:icon="@mipmap/ic_action_recovery"
         android:orderInCategory="103"
         android:title="@string/menu_setting"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never|withText" />
 </menu>

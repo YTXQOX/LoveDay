@@ -6,11 +6,15 @@ buildscript {
     repositories {
         jcenter()
         google()
+
+        maven {
+            url "http://mvn.leancloud.cn/nexus/content/repositories/public"
+        }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.jakewharton:butterknife-gradle-plugin:8.5.1'
+        classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath 'com.jakewharton:butterknife-gradle-plugin:8.8.1'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.0'
 
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -27,12 +31,15 @@ allprojects {
 
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.google.com' }
+        maven {
+            url "http://mvn.leancloud.cn/nexus/content/repositories/public"
+        }
     }
 }
 
 ext {
-    versionName = "1.5.9 (AT062018)"
-    debugNum = "20180329"
+    versionName = "1.7.1 (AT071008)"
+    debugNum = "20180731"
 }
 
 def getDebugVersionName() {

@@ -87,9 +87,7 @@ public class AppsActivity extends AppCompatActivity {
         mToolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
         mToolbar.setNavigationIcon(R.mipmap.ic_action_back);
         setSupportActionBar(mToolbar);
-
         mToolbar.setOnMenuItemClickListener(onMenuItemClick);
-
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
