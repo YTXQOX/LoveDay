@@ -45,7 +45,6 @@ import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
 import com.ljstudio.android.loveday.utils.VersionUtil;
-import com.ljstudio.android.loveday.utils.WaterMarkUtil;
 import com.ljstudio.android.loveday.views.LabelView;
 import com.ljstudio.android.loveday.views.excel.ExcelManager;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
@@ -163,16 +162,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tvTopTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, PPangActivity.class);
-//                startActivity(intent);
-
-                String path = WaterMarkUtil.getImageFilePath("marry");
-                SystemOutUtil.sysOut("path==>" + path);
-                WaterMarkUtil.addWatermarkBitmap(MainActivity.this, WaterMarkUtil.getLocalBitmap(path),"仅限办理居住证使用", 0 ,0);
-            }
+        tvTopTitle.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, PPangActivity.class);
+            Intent intent = new Intent(MainActivity.this, MarkViewActivity.class);
+            startActivity(intent);
         });
 
         String str = "";

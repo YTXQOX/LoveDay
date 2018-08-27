@@ -2,15 +2,19 @@ package com.ljstudio.android.loveday.activity;
 
 import android.animation.Animator;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +48,7 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -90,6 +95,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private Disposable mDisposable;
     private TriangulationDrawable triangulationDrawable;
+    private AlertDialog loadingDialog;
 
 
     @Override
@@ -113,6 +119,8 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         setStatusBar(ContextCompat.getColor(this, R.color.colorPrimary));
+
+        createLoadingDialog();
 
         Long id = getIntent().getLongExtra(ID, -1);
         initData(id);
@@ -293,13 +301,18 @@ public class DetailActivity extends AppCompatActivity {
 //                list.add(strPath);
 //                share(list, "爱の记忆", daysData.getTitle());
 
+                loadingDialog.show();
+
                 Observable.create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter<String> emitter) throws Exception {
-                        String strPath = ScreenShotUtil.screenShotBitmap(DetailActivity.this);
+                        Bitmap bitmap = ScreenShotUtil.getViewBitmap(fallingView);
+
+//                        String strPath = ScreenShotUtil.screenShotBitmap(DetailActivity.this);
+//                        String strPath = ScreenShotUtil.screenShot(DetailActivity.this, false);
+                        String strPath = ScreenShotUtil.save2SD(bitmap, "");
                         if (!TextUtils.isEmpty(strPath)) {
                             emitter.onNext(strPath);
-
                             emitter.onComplete();
                         }
                     }
@@ -315,17 +328,20 @@ public class DetailActivity extends AppCompatActivity {
                         List<String> list = new ArrayList<>();
                         list.add(s);
 
+                        loadingDialog.dismiss();
                         share(list, "爱の记忆", daysData.getTitle());
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        loadingDialog.dismiss();
                     }
 
                     @Override
                     public void onComplete() {
                         mDisposable.dispose();
+
+                        loadingDialog.dismiss();
                     }
                 });
             }
@@ -333,6 +349,14 @@ public class DetailActivity extends AppCompatActivity {
             return true;
         }
     };
+
+    private void createLoadingDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailActivity.this, R.style.AlertDialogStyle);
+        final View dialogView = LayoutInflater.from(DetailActivity.this)
+                .inflate(R.layout.layout_loading_progress_dialog, null);
+        dialogBuilder.setView(dialogView);
+        loadingDialog = dialogBuilder.create();
+    }
 
     private void writeOne2DB(final DaysData data) {
         try {
@@ -405,24 +429,39 @@ public class DetailActivity extends AppCompatActivity {
             Toast.makeText(this, "请选择要分享的图片", Toast.LENGTH_SHORT).show();
         } else {
             ArrayList<Uri> uris = new ArrayList<>();
+
             for (String path : listPath) {
                 filePath = path;
-                Uri uri = Uri.parse("file:///" + filePath);
-                uris.add(uri);
+                File file = new File(filePath);
+
+                if (Build.VERSION.SDK_INT >= 24) { //判读版本是否在7.0以上
+                    //参数1 上下文, 参数2 Provider主机地址 和配置文件中保持一致   参数3  共享的文件
+                    Uri fileUri = FileProvider.getUriForFile(DetailActivity.this, "com.ljstudio.android.loveday.provider.LJProvider", file);
+                    uris.add(fileUri);
+                } else {
+//                    Uri uri = Uri.parse("file:///" + filePath);
+                    Uri uri = Uri.fromFile(file);
+                    uris.add(uri);
+                }
             }
 
             boolean multiple = uris.size() > 1;
             Intent intent = new Intent(multiple ? android.content.Intent.ACTION_SEND_MULTIPLE : android.content.Intent.ACTION_SEND);
-            intent.setType("image/png");
+            intent.setType("image/*");
 //            intent.putExtra(Intent.EXTRA_SUBJECT, strSubject);
 //            intent.putExtra(Intent.EXTRA_TEXT, strText);
+
             if (multiple) {
                 intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
             } else {
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
             }
 
+            if (Build.VERSION.SDK_INT >= 24) {
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
             startActivity(Intent.createChooser(intent, "爱の分享"));
         }
     }

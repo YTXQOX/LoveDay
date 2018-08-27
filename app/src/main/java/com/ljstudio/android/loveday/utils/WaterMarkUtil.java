@@ -28,7 +28,7 @@ import java.util.Date;
  */
 public class WaterMarkUtil {
 
-        public static final String IMAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "LJSTUDIO" +
+    public static final String IMAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "LJSTUDIO" +
             File.separator + "Android" + File.separator + "LoveDay" + File.separator;
 //    public static final String IMAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "DOWNLOAD" + File.separator;
 
@@ -263,7 +263,7 @@ public class WaterMarkUtil {
         }
     }
 
-    public static boolean addWatermarkBitmap(Context context, Bitmap bitmap, String str, int w, int h) {
+    public static boolean addWatermarkBitmap(Context context, Bitmap bitmap, String name, String mark, int w, int h) {
         int destWidth = bitmap.getWidth();   //此处的bitmap已经限定好宽高
         int destHeight = bitmap.getHeight();
 
@@ -297,16 +297,16 @@ public class WaterMarkUtil {
         mPath.lineTo(destWidth * 3 / 4, destHeight / 4);
 
 //        canvas.drawTextOnPath(str, mPath, 0, 0, textPaint);
-        canvas.drawText(str, destWidth / 2, destHeight / 4, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
-        canvas.drawText(str, destWidth / 2, destHeight / 2, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
-        canvas.drawText(str, destWidth / 2, destHeight * 7  / 8, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
+        canvas.drawText(mark, destWidth / 2, destHeight / 4, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
+        canvas.drawText(mark, destWidth / 2, destHeight / 2, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
+        canvas.drawText(mark, destWidth / 2, destHeight * 7 / 8, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
 
         canvas.save(Canvas.ALL_SAVE_FLAG);
         canvas.restore();
         bitmap.recycle();
 
         ToastUtil.toastShortCenter(context, "增加水印成功");
-        return saveMyBitmap(icon, String.valueOf(new Date().getTime())); //保存至文件
+        return saveMyBitmap(icon, String.valueOf(new Date().getTime()), name + "_" + mark); //保存至文件
 //        return true;
     }
 
@@ -497,14 +497,14 @@ public class WaterMarkUtil {
 //        return true;
     }
 
-    private static boolean saveMyBitmap(Bitmap bmp, String name) {
+    private static boolean saveMyBitmap(Bitmap bmp, String timestamp, String fileName) {
         if (!isExitSDCard()) {
             return false;
         }
 
         FileOutputStream outputStream = null;
         try {
-            outputStream = new FileOutputStream(new File(getImageFilePath(name)));
+            outputStream = new FileOutputStream(new File(getImageFilePath(fileName)));
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
