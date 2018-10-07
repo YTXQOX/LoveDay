@@ -65,7 +65,8 @@ public class WaterMarkUtil {
         //在画布上绘制水印图片
         canvas.drawBitmap(watermark, paddingLeft, paddingTop, null);
         // 保存
-        canvas.save(Canvas.ALL_SAVE_FLAG);
+//        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.save();
         // 存储
         canvas.restore();
         return newb;
@@ -301,7 +302,8 @@ public class WaterMarkUtil {
         canvas.drawText(mark, destWidth / 2, destHeight / 2, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
         canvas.drawText(mark, destWidth / 2, destHeight * 7 / 8, textPaint);     //绘制上去字，开始未知x,y采用那只笔绘制
 
-        canvas.save(Canvas.ALL_SAVE_FLAG);
+//        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.save();
         canvas.restore();
         bitmap.recycle();
 
@@ -489,7 +491,8 @@ public class WaterMarkUtil {
                 canvas.drawText(s, destWidth / 2, destHeight - 45 * i, textPaint);//绘制上去字，开始未知x,y采用那只笔绘制
             }
         }
-        canvas.save(Canvas.ALL_SAVE_FLAG);
+//        canvas.save(Canvas.ALL_SAVE_FLAG);
+        canvas.save();
         canvas.restore();
         bitmap.recycle();
 
