@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     android:background="@color/colorWhite">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_preview_show_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -50,7 +50,7 @@
                     android:text="文字"
                     android:textSize="20sp" />
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/id_preview_show_text_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                         android:maxLines="1"
                         android:singleLine="true" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.ljstudio.android.loveday.activity;
 
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -16,12 +17,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.os.RemoteException;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Menu;
@@ -254,11 +255,15 @@ public class AppsActivity extends AppCompatActivity {
     }
 
     public void onClickOpen(AppsData appInfo) {
-        Intent intent = AppsActivity.this.getPackageManager().getLaunchIntentForPackage(appInfo.getPkgName());
-        if (intent == null) {
-            Toast.makeText(AppsActivity.this, "APP not found!", Toast.LENGTH_SHORT).show();
+        try {
+            Intent intent = AppsActivity.this.getPackageManager().getLaunchIntentForPackage(appInfo.getPkgName());
+            if (intent == null) {
+                Toast.makeText(AppsActivity.this, "该系统应用无法直接打开", Toast.LENGTH_SHORT).show();
+            }
+            startActivity(intent);
+        } catch (ActivityNotFoundException | NullPointerException e) {
+            Toast.makeText(AppsActivity.this, "该系统应用无法直接打开！", Toast.LENGTH_SHORT).show();
         }
-        startActivity(intent);
     }
 
     private void initView() {

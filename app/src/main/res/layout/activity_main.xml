@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context="com.ljstudio.android.loveday.activity.MainActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_main_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -96,7 +96,7 @@
 
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/id_main_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

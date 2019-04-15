@@ -1,9 +1,9 @@
 package com.ljstudio.android.loveday.adapter;
 
 
-import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;

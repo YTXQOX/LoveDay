@@ -79,6 +79,13 @@
         <attr name="marqueeview_is_resetLocation" format="boolean" /><!--重新改变内容的时候 ， 是否初始化 位置，默认为true，改变-->
     </declare-styleable>
 
+    <declare-styleable name="LikeView">
+        <attr name="defaultColor" />
+        <attr name="checkedColor" />
+        <attr name="cirRadius" />
+        <attr name="cycleTime" />
+    </declare-styleable>
+
 </resources>
 
 

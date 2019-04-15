@@ -12,23 +12,30 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/id_action_output"
+        android:id="@+id/id_action_output_cloud"
         android:icon="@mipmap/ic_action_output"
         android:orderInCategory="101"
+        android:title="@string/menu_output_cloud"
+        app:showAsAction="never|withText" />
+
+    <item
+        android:id="@+id/id_action_output"
+        android:icon="@mipmap/ic_action_output"
+        android:orderInCategory="102"
         android:title="@string/menu_output"
         app:showAsAction="never|withText" />
 
     <item
         android:id="@+id/id_action_recovery"
         android:icon="@mipmap/ic_action_recovery"
-        android:orderInCategory="102"
+        android:orderInCategory="103"
         android:title="@string/menu_recovery"
         app:showAsAction="never|withText" />
 
     <item
         android:id="@+id/id_action_setting"
         android:icon="@mipmap/ic_action_recovery"
-        android:orderInCategory="103"
+        android:orderInCategory="104"
         android:title="@string/menu_setting"
         app:showAsAction="never|withText" />
 </menu>

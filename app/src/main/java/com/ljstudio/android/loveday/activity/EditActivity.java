@@ -1,36 +1,60 @@
 package com.ljstudio.android.loveday.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.DeleteCallback;
+import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.SaveCallback;
+import com.google.android.material.textfield.TextInputEditText;
 import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
+import com.ljstudio.android.loveday.constants.Constant;
+import com.ljstudio.android.loveday.entity.AllParameter;
 import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
+import com.ljstudio.android.loveday.greendao.AllParameterDao;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
+import com.ljstudio.android.loveday.utils.ChineseNameGenerator;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
+import com.ljstudio.android.loveday.utils.NetworkUtil;
+import com.ljstudio.android.loveday.utils.PreferencesUtil;
+import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
+import com.ljstudio.android.loveday.utils.VersionUtil;
 import com.ljstudio.android.loveday.views.SwitchView;
 import com.ljstudio.android.loveday.views.datetimepicker.date.DatePickerDialog;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -52,6 +76,14 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
     TextView tvTop;
     @BindView(R.id.id_days_edit_switch)
     SwitchView mSwitchView;
+    @BindView(R.id.id_days_edit_square_layout)
+    RelativeLayout layoutSquare;
+    @BindView(R.id.id_days_edit_square_text)
+    TextView tvSquare;
+    @BindView(R.id.id_days_edit_square_text_hint)
+    TextView tvSquareHint;
+    @BindView(R.id.id_days_edit_square_switch)
+    SwitchView mSquareSwitchView;
     @BindView(R.id.id_days_edit_save)
     Button tvSave;
 
@@ -61,8 +93,10 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
     private String strEventTitle;
     private String strEventDate;
     private boolean isTop;
+    private boolean isSend2Square;
 
     private DaysData daysData;
+    private String userName;
 
 
     @Override
@@ -76,6 +110,14 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
         toolbar.setNavigationIcon(R.mipmap.ic_action_back);
         setSupportActionBar(toolbar);
+
+        userName = PreferencesUtil.getPrefString(EditActivity.this, Constant.USER_NAME, "");
+        if (TextUtils.isEmpty(userName)) {
+            String generatedName = ChineseNameGenerator.getInstance().generate();
+            Log.i("generatedName-->", generatedName);
+            PreferencesUtil.setPrefString(EditActivity.this, Constant.USER_NAME, generatedName);
+            userName = PreferencesUtil.getPrefString(EditActivity.this, Constant.USER_NAME, getResources().getString(R.string.app_name));
+        }
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,12 +144,16 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
          */
         mEditType = getIntent().getIntExtra(EDIT_TYPE, 200);
         if (200 == mEditType) {
+            layoutSquare.setVisibility(View.VISIBLE);
+
             toolbar.setTitle("新增时光の记忆");
             tvTime.setText(DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate1));
             tvTop.setTextColor(getResources().getColor(R.color.colorGrayLight));
             Calendar calendar = Calendar.getInstance();
             datePickerDialog = DatePickerDialog.newInstance(EditActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
         } else if (400 == mEditType) {
+            layoutSquare.setVisibility(View.GONE);
+
             Long id = getIntent().getLongExtra(ID, -1);
             daysData = readOne4DB(id).get(0);
 
@@ -117,6 +163,7 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
             tvTime.setText(daysData.getDate());
 
             isTop = daysData.getIsTop();
+
             if (daysData.getIsTop()) {
                 mSwitchView.setChecked(true);
                 tvTop.setTextColor(getResources().getColor(R.color.colorGray));
@@ -131,18 +178,40 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
             datePickerDialog = DatePickerDialog.newInstance(EditActivity.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
         }
 
-        mSwitchView.setOnCheckedChangeListener(new SwitchView.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(View view, boolean isChecked) {
-                isTop =  isChecked;
-                if (isChecked) {
-                    tvTop.setTextColor(getResources().getColor(R.color.colorGray));
-                } else {
-                    tvTop.setTextColor(getResources().getColor(R.color.colorGrayLight));
-                }
-
+        mSquareSwitchView.setOnCheckedChangeListener((view, isChecked) -> {
+            isSend2Square = isChecked;
+            if (isChecked) {
+                tvSquare.setTextColor(getResources().getColor(R.color.colorGray));
+                tvSquareHint.setTextColor(getResources().getColor(R.color.colorGray));
+            } else {
+                tvSquare.setTextColor(getResources().getColor(R.color.colorGrayLight));
+                tvSquareHint.setTextColor(getResources().getColor(R.color.colorGrayLight));
             }
         });
+
+        mSwitchView.setOnCheckedChangeListener((view, isChecked) -> {
+            isTop = isChecked;
+            if (isChecked) {
+                tvTop.setTextColor(getResources().getColor(R.color.colorGray));
+            } else {
+                tvTop.setTextColor(getResources().getColor(R.color.colorGrayLight));
+            }
+        });
+
+        readAll4DB();
+    }
+
+    private List<AllParameter> readAll4DB() {
+        final AllParameterDao dao = MyApplication.getDaoSession(this).getAllParameterDao();
+        List<AllParameter> list = dao.queryBuilder()
+                .orderAsc(AllParameterDao.Properties.Id)
+                .build().list();
+        for (AllParameter data : list) {
+            SystemOutUtil.sysOut("读-->" + data.toString());
+        }
+        SystemOutUtil.sysOut("读-done");
+
+        return list;
     }
 
     @OnClick(R.id.id_days_edit_date_text)
@@ -164,6 +233,7 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
         }
 
         DaysData data = new DaysData();
+        data.setId(System.currentTimeMillis());
         data.setTitle(strEventTitle);
         data.setDate(strEventDate);
         data.setDays("1");
@@ -179,6 +249,7 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
 //            data.setUnit("天");
 //            data.setIsTop(false);
 //            writeOne2DB(tempData);
+            data.setId(daysData.getId());
 
             deleteOne4DB(daysData.getId());
         }
@@ -210,6 +281,10 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
                     } else {
 //                        ToastUtil.showToast(EditActivity.this, "添加成功");
                         Toasty.success(EditActivity.this, "添加成功", Toast.LENGTH_SHORT, true).show();
+
+                        if (isSend2Square) {
+                            send2Square(data);
+                        }
                     }
 
                     EditActivity.this.finish();
@@ -218,6 +293,149 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void send2Square(DaysData daysData) {
+        if (NetworkUtil.checkNetworkOnly(EditActivity.this)) {
+            AndPermission.with(this)
+                    .runtime()
+                    .permission(Permission.READ_PHONE_STATE)
+                    .onGranted(permissions -> {
+                        String imei = getImei();
+                        String strManufacturer = Build.MANUFACTURER;
+                        String strDevice = Build.DEVICE;
+                        String strBrand = Build.BRAND;
+                        String strModel = Build.MODEL;
+                        String strVersionRelease = Build.VERSION.RELEASE;
+
+                        Locale locale;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            locale = getResources().getConfiguration().getLocales().get(0);
+                        } else {
+                            locale = getResources().getConfiguration().locale;
+                        }
+                        String language = locale.getLanguage() + "-" + locale.getCountry();
+
+                        AVObject saveAV = new AVObject(Constant.DB_SQUARE);
+                        saveAV.put("userId", imei);
+                        saveAV.put("id", daysData.getId());
+                        saveAV.put("title", daysData.getTitle());
+                        saveAV.put("date", daysData.getDate());
+                        saveAV.put("days", daysData.getDays());
+                        saveAV.put("unit", "天");
+                        saveAV.put("isTop", daysData.getIsTop());
+                        saveAV.put("nickname", userName);
+
+                        saveAV.put("info_manufacturer", strManufacturer);
+                        saveAV.put("info_device", strDevice);
+                        saveAV.put("info_barnd", strBrand);
+                        saveAV.put("info_model", strModel);
+                        saveAV.put("info_language", language);
+                        saveAV.put("info_version", VersionUtil.getVersionName(EditActivity.this));
+                        saveAV.put("info_system", strVersionRelease);
+                        saveAV.put("info_platform", "android");
+
+                        /**
+                         * 删除
+                         */
+                        AVQuery<AVObject> queryAV = new AVQuery<>(Constant.DB_SQUARE);
+                        queryAV.whereEqualTo("id", daysData.getId());
+                        SystemOutUtil.sysOut("daysData1.getId()-->" + daysData.getId());
+                        queryAV.findInBackground(new FindCallback<AVObject>() {
+                            @Override
+                            public void done(List<AVObject> list, AVException e) {
+                                if (null != list && 0 != list.size()) {
+//                                        String cql = "delete from " +  db + " where id=\'" + data.get("id") + "\'";
+//                                        Log.i("cql-->", cql);
+//                                        AVQuery.doCloudQueryInBackground(cql, new CloudQueryCallback<AVCloudQueryResult>() {
+//                                            @Override
+//                                            public void done(AVCloudQueryResult avCloudQueryResult, AVException e) {
+//                                                // 如果 e 为空，说明保存成功
+//                                            }
+//                                        });
+
+                                    SystemOutUtil.sysOut("list.size()-->" + list.size());
+                                    AVObject.deleteAllInBackground(list, new DeleteCallback() {
+                                        @Override
+                                        public void done(AVException e) {
+                                            if (e != null) {
+                                                // 错误
+                                                ToastUtil.showToast(EditActivity.this, e.getCode());
+                                            } else {
+                                                // 成功
+                                                /**
+                                                 * 保存数据
+                                                 */
+                                                saveAV.saveInBackground(new SaveCallback() {
+                                                    @Override
+                                                    public void done(AVException e) {
+                                                        if (e == null) {
+                                                            // 存储成功
+                                                            Toasty.success(EditActivity.this, "成功发布到时光广场").show();
+                                                        } else {
+                                                            // 失败的话，请检查网络环境以及 SDK 配置是否正确
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    /**
+                                     * 保存数据
+                                     */
+                                    saveAV.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(AVException e) {
+                                            if (e == null) {
+                                                // 存储成功
+                                                Toasty.success(EditActivity.this, "成功发布到时光广场").show();
+                                            } else {
+                                                // 失败的话，请检查网络环境以及 SDK 配置是否正确
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    })
+                    .onDenied(permissions -> {
+                        new MaterialDialog.Builder(EditActivity.this)
+                                .title("权限设置")
+                                .negativeText("取消")
+                                .positiveText("去设置")
+                                .content("上传及同步成绩需要开启手机识别码权限(READ_PHONE_STATE)获取您的 IMEI 作为您的唯一ID")
+                                .onPositive((dialog, which) -> {
+                                    getAppDetailSettingIntent(EditActivity.this);
+                                    dialog.dismiss();
+                                })
+                                .onNegative((dialog, which) -> {
+                                    dialog.dismiss();
+                                })
+                                .show();
+
+                    })
+                    .start();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private String getImei() {
+        String imei = "imei";
+        try {
+            final TelephonyManager manager = (TelephonyManager) EditActivity.this.getSystemService(Context.TELEPHONY_SERVICE);
+            if (manager.getDeviceId() == null || manager.getDeviceId().equals("")) {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    imei = manager.getDeviceId(0);
+                }
+            } else {
+                imei = manager.getDeviceId();
+            }
+        } catch (Exception e) {
+
+        }
+
+        return imei;
     }
 
     private List<DaysData> readOne4DB(Long id) {
@@ -261,6 +479,23 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
             tintManager.setNavigationBarTintEnabled(false);
             tintManager.setTintColor(color);
         }
+    }
+
+    /**
+     * 跳转到权限设置界面
+     */
+    private void getAppDetailSettingIntent(Context context) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= 9) {
+            intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            intent.setData(Uri.fromParts("package", getPackageName(), null));
+        } else if (Build.VERSION.SDK_INT <= 8) {
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
+            intent.putExtra("com.android.settings.ApplicationPkgName", getPackageName());
+        }
+        startActivity(intent);
     }
 
 }

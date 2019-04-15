@@ -4,6 +4,7 @@
     <string name="easter_egg_content">我是時光機，又叫倒數日，也叫戀時光，記錄時光，記錄美\n\n </string>
 
     <string name="menu_add">新增</string>
+    <string name="menu_output_cloud">雲端備份</string>
     <string name="menu_output">本地備份</string>
     <string name="menu_recovery">恢復記錄</string>
     <string name="menu_setting">設置</string>

@@ -4,6 +4,7 @@
     <string name="easter_egg_content">我是時光機，又叫倒數日，也叫戀時光，記錄時光，記錄美\n\n </string>
 
     <string name="menu_add">新增</string>
+    <string name="menu_output_cloud">雲端備份</string>
     <string name="menu_output">本地備份</string>
     <string name="menu_recovery">恢復記錄</string>
     <string name="menu_setting">設置</string>
@@ -17,6 +18,8 @@
     <string name="cancel">取消</string>
     <string name="confirm">確定</string>
     <string name="settings">設置</string>
+    <string name="square">時光廣場</string>
+    <string name="moments">時光甜甜圈</string>
     <string name="about">關於</string>
     <string name="welfare">福利</string>
     <string name="hint">「天喜至魚」科技</string>

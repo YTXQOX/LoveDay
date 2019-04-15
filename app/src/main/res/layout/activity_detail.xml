@@ -10,7 +10,7 @@
     android:orientation="vertical"
     tools:context="com.ljstudio.android.loveday.activity.MainActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_detail_toolbar"
         android:layout_width="match_parent"
         style="@style/NoSpaceActionBarTheme"

@@ -49,14 +49,15 @@ public class AppsManagerAdapter extends BaseQuickAdapter<AppsData, AppsManagerAd
         public ViewHolder(View rootView) {
             super(rootView);
             this.rootView = rootView;
-            this.imgApp = (ImageView) rootView.findViewById(R.id.id_item_app_image);
-            this.tvCopy = (TextView) rootView.findViewById(R.id.id_item_copy);
-            this.tvOpen = (TextView) rootView.findViewById(R.id.id_item_open);
-            this.apkName = (TextView) rootView.findViewById(R.id.apkName);
-            this.pkgName = (TextView) rootView.findViewById(R.id.pkgName);
-            this.apkSize = (TextView) rootView.findViewById(R.id.apkSize);
-            this.apkVersion = (TextView) rootView.findViewById(R.id.apkVersion);
-            this.sigmd5 = (TextView) rootView.findViewById(R.id.sigmd5);
+
+            this.imgApp = rootView.findViewById(R.id.id_item_app_image);
+            this.tvCopy = rootView.findViewById(R.id.id_item_copy);
+            this.tvOpen = rootView.findViewById(R.id.id_item_open);
+            this.apkName = rootView.findViewById(R.id.apkName);
+            this.pkgName = rootView.findViewById(R.id.pkgName);
+            this.apkSize = rootView.findViewById(R.id.apkSize);
+            this.apkVersion = rootView.findViewById(R.id.apkVersion);
+            this.sigmd5 = rootView.findViewById(R.id.sigmd5);
         }
     }
 

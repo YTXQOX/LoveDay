@@ -2,17 +2,15 @@ package com.ljstudio.android.loveday.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -27,20 +25,29 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.DeleteCallback;
+import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.SaveCallback;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.lzyzsd.randomcolor.RandomColor;
 import com.ljstudio.android.loveday.MyApplication;
 import com.ljstudio.android.loveday.R;
 import com.ljstudio.android.loveday.adapter.DaysAdapter;
 import com.ljstudio.android.loveday.adapter.QuickDaysAdapter;
+import com.ljstudio.android.loveday.base.AllParameterDao;
 import com.ljstudio.android.loveday.constants.Constant;
 import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.entity.ExcelDaysData;
 import com.ljstudio.android.loveday.eventbus.MessageEvent;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
+import com.ljstudio.android.loveday.utils.ChineseNameGenerator;
 import com.ljstudio.android.loveday.utils.DateFormatUtil;
 import com.ljstudio.android.loveday.utils.DateUtil;
 import com.ljstudio.android.loveday.utils.FileUtil;
+import com.ljstudio.android.loveday.utils.NetworkUtil;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.SystemOutUtil;
 import com.ljstudio.android.loveday.utils.ToastUtil;
@@ -50,23 +57,34 @@ import com.ljstudio.android.loveday.views.excel.ExcelManager;
 import com.ljstudio.android.loveday.views.fonts.FontsManager;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.tapadoo.alerter.Alerter;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.nekocode.triangulation.TriangulationDrawable;
@@ -115,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
     private long mClickTime2 = 0;
     private long mClickTime3 = 0;
 
+    private String userName;
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -130,6 +150,14 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
+
+        userName = PreferencesUtil.getPrefString(MainActivity.this, Constant.USER_NAME, "");
+        if (TextUtils.isEmpty(userName)) {
+            String generatedName = ChineseNameGenerator.getInstance().generate();
+            Log.i("generatedName-->", generatedName);
+            PreferencesUtil.setPrefString(MainActivity.this, Constant.USER_NAME, generatedName);
+            userName = PreferencesUtil.getPrefString(MainActivity.this, Constant.USER_NAME, getResources().getString(R.string.app_name));
+        }
 
         mHandler = new Handler();
 
@@ -258,6 +286,29 @@ public class MainActivity extends AppCompatActivity {
 
         FontsManager.initFormAssets(this, "fonts/gtw.ttf");
         FontsManager.changeFonts(this);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    getTxtContent();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void getTxtContent() throws Exception {
+        InputStreamReader inputReader = new InputStreamReader(getResources().getAssets().open("AllParams.txt"));
+        BufferedReader bufReader = new BufferedReader(inputReader);
+        String s = null;
+        while ((s = bufReader.readLine()) != null) {// 使用readLine方法，一次读一行
+            SystemOutUtil.sysOut("写-->getTxtContent()-->" + s);
+            AllParameterDao.getInstance(this).insertData(s);
+        }
+        SystemOutUtil.sysOut("写-done");
+        bufReader.close();
     }
 
     private void onClick(MotionEvent event, String name, int type) {
@@ -371,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initListData() {
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(MainActivity.this);
-        layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager1.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager1);
 //        recyclerView.addItemDecoration(new RecyclerViewDividerItem(this, VERTICAL_LIST, R.color.colorGrayLight));
         recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).build());
@@ -457,6 +508,8 @@ public class MainActivity extends AppCompatActivity {
                     int size = 0;
                     for (DaysData entity : data) {
                         MyApplication.getDaoSession(MainActivity.this).getDaysDataDao().insertOrReplace(entity);
+                        MyApplication.getDaoSession(MainActivity.this).getDaysDataDao().insertOrReplace(entity);
+
                         size = size + 1;
 
                         if (size >= data.size()) {
@@ -513,6 +566,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void testData() {
         DaysData data1 = new DaysData();
+        data1.setId(System.currentTimeMillis());
         data1.setTitle("ttt.XY一起美丽时光");
         data1.setDate("2015-11-26");
         data1.setDays("1");
@@ -629,6 +683,9 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(EditActivity.EDIT_TYPE, 200);
                 intent.setClass(MainActivity.this, EditActivity.class);
                 startActivity(intent);
+            } else if (id == R.id.id_action_output_cloud) {
+                SystemOutUtil.sysOut("listDays.size()-->" + listDays.size());
+                onCloudExport();
             } else if (id == R.id.id_action_output) {
                 onExport();
             } else if (id == R.id.id_action_recovery) {
@@ -710,6 +767,125 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 云端备份
+     */
+    private void onCloudExport() {
+        if (NetworkUtil.checkNetworkOnly(MainActivity.this)) {
+            AndPermission.with(this)
+                    .runtime()
+                    .permission(Permission.READ_PHONE_STATE)
+                    .onGranted(permissions -> {
+                        String imei = getImei();
+                        String strManufacturer = Build.MANUFACTURER;
+                        String strDevice = Build.DEVICE;
+                        String strBrand = Build.BRAND;
+                        String strModel = Build.MODEL;
+                        String strVersionRelease = Build.VERSION.RELEASE;
+
+                        Locale locale;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            locale = getResources().getConfiguration().getLocales().get(0);
+                        } else {
+                            locale = getResources().getConfiguration().locale;
+                        }
+                        String language = locale.getLanguage() + "-" + locale.getCountry();
+
+                        for (DaysData daysData1 : listDays) {
+                            AVObject saveAV = new AVObject(Constant.DB_MAIN);
+                            saveAV.put("userId", imei);
+                            saveAV.put("id", daysData1.getId());
+                            saveAV.put("title", daysData1.getTitle());
+                            saveAV.put("date", daysData1.getDate());
+                            saveAV.put("days", daysData1.getDays());
+                            saveAV.put("unit", "天");
+                            saveAV.put("isTop", daysData1.getIsTop());
+                            saveAV.put("nickname", userName);
+
+                            saveAV.put("info_manufacturer", strManufacturer);
+                            saveAV.put("info_device", strDevice);
+                            saveAV.put("info_barnd", strBrand);
+                            saveAV.put("info_model", strModel);
+                            saveAV.put("info_language", language);
+                            saveAV.put("info_version", VersionUtil.getVersionName(MainActivity.this));
+                            saveAV.put("info_system", strVersionRelease);
+                            saveAV.put("info_platform", "android");
+
+                            /**
+                             * 删除
+                             */
+                            AVQuery<AVObject> queryAV = new AVQuery<>(Constant.DB_MAIN);
+                            queryAV.whereEqualTo("id", daysData1.getId());
+                            SystemOutUtil.sysOut("daysData1.getId()-->" + daysData1.getId());
+                            queryAV.findInBackground(new FindCallback<AVObject>() {
+                                @Override
+                                public void done(List<AVObject> list, AVException e) {
+                                    if (null != list && 0 != list.size()) {
+//                                        String cql = "delete from " +  db + " where id=\'" + data.get("id") + "\'";
+//                                        Log.i("cql-->", cql);
+//                                        AVQuery.doCloudQueryInBackground(cql, new CloudQueryCallback<AVCloudQueryResult>() {
+//                                            @Override
+//                                            public void done(AVCloudQueryResult avCloudQueryResult, AVException e) {
+//                                                // 如果 e 为空，说明保存成功
+//                                            }
+//                                        });
+
+                                        SystemOutUtil.sysOut("list.size()-->" + list.size());
+                                        AVObject.deleteAllInBackground(list, new DeleteCallback() {
+                                            @Override
+                                            public void done(AVException e) {
+                                                if (e != null) {
+                                                    // 错误
+                                                    ToastUtil.showToast(MainActivity.this, e.getCode());
+                                                } else {
+                                                    // 成功
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+
+                            /**
+                             * 保存数据
+                             */
+                            saveAV.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(AVException e) {
+                                    if (e == null) {
+                                        // 存储成功
+//                                      ToastUtil.showToast(MainActivity.this, "云端备份成功");
+                                        Toasty.success(MainActivity.this, "云端备份成功").show();
+                                    } else {
+                                        // 失败的话，请检查网络环境以及 SDK 配置是否正确
+                                    }
+                                }
+                            });
+                        }
+                    })
+                    .onDenied(permissions -> {
+                        new MaterialDialog.Builder(MainActivity.this)
+                                .title("权限设置")
+                                .negativeText("取消")
+                                .positiveText("去设置")
+                                .content("上传及同步成绩需要开启手机状态权限(READ_PHONE_STATE)获取您的 IMEI 作为您的唯一ID")
+                                .onPositive((dialog, which) -> {
+                                    getAppDetailSettingIntent(MainActivity.this);
+                                    dialog.dismiss();
+                                })
+                                .onNegative((dialog, which) -> {
+                                    dialog.dismiss();
+                                })
+                                .show();
+
+                    })
+                    .start();
+        }
+    }
+
+    /**
+     * 本地备份
+     */
     private void onExport() {
         File file = null;
         try {
@@ -793,6 +969,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private String getImei() {
+        String imei = "imei";
+        try {
+            final TelephonyManager manager = (TelephonyManager) MainActivity.this.getSystemService(Context.TELEPHONY_SERVICE);
+            if (manager.getDeviceId() == null || manager.getDeviceId().equals("")) {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    imei = manager.getDeviceId(0);
+                }
+            } else {
+                imei = manager.getDeviceId();
+            }
+        } catch (Exception e) {
+
+        }
+
+        return imei;
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         if (200 == event.message) {
@@ -807,6 +1002,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void setIsInstall() {
         PreferencesUtil.setPrefBoolean(this, Constant.IS_FIRST, false);
+    }
+
+    /**
+     * 跳转到权限设置界面
+     */
+    private void getAppDetailSettingIntent(Context context) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= 9) {
+            intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            intent.setData(Uri.fromParts("package", getPackageName(), null));
+        } else if (Build.VERSION.SDK_INT <= 8) {
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
+            intent.putExtra("com.android.settings.ApplicationPkgName", getPackageName());
+        }
+        startActivity(intent);
     }
 
     @Override

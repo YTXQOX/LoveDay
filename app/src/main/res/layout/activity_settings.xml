@@ -6,7 +6,7 @@
     android:background="#eeeeee"
     android:fitsSystemWindows="true">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_setting_toolbar"
         style="@style/NoSpaceActionBarTheme"
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/id_about_app_hint"
+            android:id="@+id/id_setting_about_app_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -61,10 +61,48 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/id_setting_welfare_layout"
+        android:id="@+id/id_setting_square_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/id_setting_about_app_layout"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/layout_selector"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/id_setting_square_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="时光广场"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_setting_moments_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/id_setting_square_layout"
+        android:layout_marginTop="0.5dp"
+        android:background="@drawable/layout_selector"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/id_setting_moments_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="时光甜甜圈"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_setting_welfare_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/id_setting_moments_layout"
         android:layout_marginTop="16dp"
         android:background="@drawable/layout_selector"
         android:padding="12dp">

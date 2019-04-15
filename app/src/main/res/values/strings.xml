@@ -4,6 +4,7 @@
     <string name="easter_egg_content">LoveDay. Record Time, Record Beauty\n\n </string>
 
     <string name="menu_add">add</string>
+    <string name="menu_output_cloud">output cloud</string>
     <string name="menu_output">output</string>
     <string name="menu_recovery">recovery</string>
     <string name="menu_setting">setting</string>
@@ -17,6 +18,8 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="settings">Settings</string>
+    <string name="square">Square</string>
+    <string name="moments">Moments</string>
     <string name="about">About</string>
     <string name="welfare">Welfare</string>
 

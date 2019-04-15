@@ -11,10 +11,10 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,12 +24,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.ljstudio.android.loveday.R;
 import com.ljstudio.android.loveday.constants.Constant;
 import com.ljstudio.android.loveday.utils.ChineseNameGenerator;
+import com.ljstudio.android.loveday.utils.NetworkUtil;
 import com.ljstudio.android.loveday.utils.PreferencesUtil;
 import com.ljstudio.android.loveday.utils.ScreenUtil;
 import com.tapadoo.alerter.Alerter;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
 
 import java.util.List;
 
@@ -56,7 +60,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     @BindView(R.id.id_setting_about_app_layout)
     RelativeLayout layoutAboutApp;
-
+    @BindView(R.id.id_setting_square_layout)
+    RelativeLayout layoutSquare;
+    @BindView(R.id.id_setting_moments_layout)
+    RelativeLayout layoutMoments;
     @BindView(R.id.id_setting_welfare_layout)
     RelativeLayout layoutWelfare;
     @BindView(R.id.id_setting_reward_layout)
@@ -96,6 +103,46 @@ public class SettingsActivity extends AppCompatActivity {
 
         toolBar.setNavigationOnClickListener(view -> SettingsActivity.this.finish());
 
+    }
+
+    @OnClick(R.id.id_setting_square_layout)
+    public void square(View view) {
+        if (NetworkUtil.checkNetworkOnly(SettingsActivity.this)) {
+            AndPermission.with(this)
+                    .runtime()
+                    .permission(Permission.READ_PHONE_STATE)
+                    .onGranted(permissions -> {
+                        String imei = getImei();
+                        Intent intent = new Intent(SettingsActivity.this, SquareActivity.class);
+                        intent.putExtra(SquareActivity.IMEI, imei);
+                        startActivity(intent);
+                    })
+                    .onDenied(permissions -> {
+                        new MaterialDialog.Builder(SettingsActivity.this)
+                                .title("权限设置")
+                                .negativeText("取消")
+                                .positiveText("去设置")
+                                .content("时光广场需要开启手机状态权限(READ_PHONE_STATE)获取您的IMEI作为您的唯一ID")
+                                .onPositive((dialog, which) -> {
+                                    getAppDetailSettingIntent(SettingsActivity.this);
+                                    dialog.dismiss();
+                                })
+                                .onNegative((dialog, which) -> {
+                                    dialog.dismiss();
+                                })
+                                .show();
+
+                    })
+                    .start();
+        }
+    }
+
+    @OnClick(R.id.id_setting_moments_layout)
+    public void moments(View view) {
+        String imei = getImei();
+        Intent intent = new Intent(SettingsActivity.this, MomentsActivity.class);
+        intent.putExtra(MomentsActivity.IMEI, imei);
+        startActivity(intent);
     }
 
     @OnClick(R.id.id_setting_welfare_layout)
@@ -138,7 +185,7 @@ public class SettingsActivity extends AppCompatActivity {
      * 赞赏 dialog
      */
     private void showRewardDialog() {
-        android.support.v7.app.AlertDialog.Builder dialogBuilder = new android.support.v7.app.AlertDialog.Builder(SettingsActivity.this);
+        androidx.appcompat.app.AlertDialog.Builder dialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(SettingsActivity.this);
         final View dialogView = LayoutInflater.from(SettingsActivity.this)
                 .inflate(R.layout.layout_reward_dialog, null);
 //        dialogBuilder.setView(dialogView);
@@ -148,7 +195,7 @@ public class SettingsActivity extends AppCompatActivity {
             send(v);
         });
 
-        android.support.v7.app.AlertDialog dialog = dialogBuilder.create();
+        androidx.appcompat.app.AlertDialog dialog = dialogBuilder.create();
         dialog.show();
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(SettingsActivity.this, 350));
         dialog.setContentView(dialogView);

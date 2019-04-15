@@ -2,9 +2,9 @@ package com.ljstudio.android.loveday.views.scrollnumber;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.ColorRes;
-import android.support.annotation.IntRange;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IntRange;
+import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;

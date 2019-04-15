@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.avos.avoscloud.AVOSCloud;
+import com.facebook.stetho.Stetho;
 import com.ljstudio.android.loveday.greendao.DaoMaster;
 import com.ljstudio.android.loveday.greendao.DaoSession;
 
@@ -41,8 +42,10 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        String strLeanCloudClientKey = "KJmQymXrI63PviBgF9rxrAO0";
-        // 初始化参数依次为 this, AppId, AppKey（辣椒APP）
-        AVOSCloud.initialize(this, "jBe28RManShl1crwcAlfD5zt-gzGzoHsz", strLeanCloudClientKey);
+        Stetho.initializeWithDefaults(this);
+
+        String strLeanCloudClientKey = "axXaQ85nH6O9XX3IrVX3R9DM";
+        // 初始化参数依次为 this, AppId, AppKey（时光机APP）
+        AVOSCloud.initialize(this, "fMdAMi3z0G3gKXMcIRyk80u8-gzGzoHsz", strLeanCloudClientKey);
     }
 }

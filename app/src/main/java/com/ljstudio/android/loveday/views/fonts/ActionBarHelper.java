@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -40,7 +40,7 @@ public class ActionBarHelper {
 //        } else
         if (activity instanceof AppCompatActivity) {
             try {
-                android.support.v7.app.ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
+                androidx.appcompat.app.ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
                 if (actionBar != null)
                     setTitle(actionBar, typeface, actionBar.getTitle().toString());
             } catch (Exception e) {
@@ -96,7 +96,7 @@ public class ActionBarHelper {
      * @param typeface  字体样式
      * @param title     标题
      */
-    public static void setTitle(android.support.v7.app.ActionBar actionBar, Typeface typeface, String title) {
+    public static void setTitle(androidx.appcompat.app.ActionBar actionBar, Typeface typeface, String title) {
         if (typeface == null || actionBar == null) {
             Log.e(TAG, "typeface或actionbar为空");
             return;
@@ -129,7 +129,7 @@ public class ActionBarHelper {
      * @param actionBar       标题栏
      * @param spannableString 格式化后的标题
      */
-    public static void setTitle(android.support.v7.app.ActionBar actionBar, SpannableString spannableString) {
+    public static void setTitle(androidx.appcompat.app.ActionBar actionBar, SpannableString spannableString) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN && Build.MANUFACTURER.toUpperCase().equals("LGE")) {
             actionBar.setTitle(spannableString.toString());
         } else {

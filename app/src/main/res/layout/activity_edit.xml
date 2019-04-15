@@ -8,10 +8,10 @@
     android:orientation="vertical"
     tools:context="com.ljstudio.android.loveday.activity.MainActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_edit_toolbar"
-        android:layout_width="match_parent"
         style="@style/NoSpaceActionBarTheme"
+        android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary" />
 
@@ -33,7 +33,7 @@
                 android:layout_centerVertical="true"
                 android:src="@mipmap/ic_edit_title" />
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/id_days_edit_title_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,12 +65,23 @@
                 android:src="@mipmap/ic_edit_time" />
 
             <TextView
-                android:id="@+id/id_days_edit_date_text"
-                android:layout_width="match_parent"
+                android:id="@+id/id_days_edit_date_hint"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="12dp"
+                android:text="点击选择时间"
+                android:textColor="@color/colorGray"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/id_days_edit_date_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:layout_toStartOf="@id/id_days_edit_date_hint"
                 android:layout_toEndOf="@id/id_days_edit_time_icon"
                 android:text="time"
                 android:textSize="18sp" />
@@ -103,9 +114,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="12dp"
-                android:textColor="@color/colorGrayLight"
                 android:layout_toEndOf="@id/id_days_edit_top_icon"
                 android:text="置顶"
+                android:textColor="@color/colorGrayLight"
                 android:textSize="18sp" />
 
             <com.ljstudio.android.loveday.views.SwitchView
@@ -123,6 +134,54 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp" />
 
+        <RelativeLayout
+            android:id="@+id/id_days_edit_square_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/id_days_edit_square_icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/ic_edit_square" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/id_days_edit_square_icon">
+
+                <TextView
+                    android:id="@+id/id_days_edit_square_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="发布到时光广场"
+                    android:textColor="@color/colorGrayLight"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/id_days_edit_square_text_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/id_days_edit_square_text"
+                    android:layout_marginStart="12dp"
+                    android:text="发现与你一起的日子"
+                    android:textColor="@color/colorGrayLight"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+            <com.ljstudio.android.loveday.views.SwitchView
+                android:id="@+id/id_days_edit_square_switch"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
     </LinearLayout>
 
     <Button
@@ -130,7 +189,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="72dp"
+        android:layout_margin="48dp"
         android:background="@color/colorBlue"
         android:paddingLeft="18dp"
         android:paddingRight="18dp"

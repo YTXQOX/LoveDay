@@ -30,8 +30,8 @@ import java.util.List;
  */
 public class WelfareAdapter extends BaseQuickAdapter<WelfareData, WelfareAdapter.ViewHolder> {
 
-    List<WelfareData> data = new ArrayList<>();
-    Context context;
+    private List<WelfareData> data = new ArrayList<>();
+    private Context context;
 
 
     public WelfareAdapter(Context context, List<WelfareData> data) {
@@ -43,6 +43,9 @@ public class WelfareAdapter extends BaseQuickAdapter<WelfareData, WelfareAdapter
 
     public WelfareAdapter(Context context, List<WelfareData> data, int layoutResId) {
         super(R.layout.layout_welfare_item, data);
+
+        this.context = context;
+        this.data = data;
     }
 
     @Override

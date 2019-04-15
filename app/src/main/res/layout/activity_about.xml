@@ -6,7 +6,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_setting_toolbar"
         android:layout_width="match_parent"
         style="@style/NoSpaceActionBarTheme"
@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/id_logo"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
                 android:text="V6.6.2" />
         </RelativeLayout>
 
@@ -68,18 +69,18 @@
                 android:src="@mipmap/ic_action_arrow_right" />
         </RelativeLayout>
 
+        <!--android:text="「天喜至鱼」科技（厦门）"-->
         <TextView
-            android:id="@+id/id_hint_text"
+            android:id="@+id/id_about_company_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="@string/hint"
+            android:gravity="center_horizontal"
+            android:text="「李逍遥的客栈」（S Series）"
+            android:textColor="@color/colorGray"
             android:textSize="12sp" />
-
     </RelativeLayout>
 
 </LinearLayout>

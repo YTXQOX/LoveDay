@@ -1,7 +1,7 @@
 package com.ljstudio.android.loveday.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.LinearLayout;
 
 import com.ljstudio.android.loveday.R;

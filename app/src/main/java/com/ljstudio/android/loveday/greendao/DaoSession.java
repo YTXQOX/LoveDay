@@ -8,9 +8,11 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
+import com.ljstudio.android.loveday.entity.AllParameter;
 import com.ljstudio.android.loveday.entity.DaysData;
 import com.ljstudio.android.loveday.entity.TestData;
 
+import com.ljstudio.android.loveday.greendao.AllParameterDao;
 import com.ljstudio.android.loveday.greendao.DaysDataDao;
 import com.ljstudio.android.loveday.greendao.TestDataDao;
 
@@ -23,9 +25,11 @@ import com.ljstudio.android.loveday.greendao.TestDataDao;
  */
 public class DaoSession extends AbstractDaoSession {
 
+    private final DaoConfig allParameterDaoConfig;
     private final DaoConfig daysDataDaoConfig;
     private final DaoConfig testDataDaoConfig;
 
+    private final AllParameterDao allParameterDao;
     private final DaysDataDao daysDataDao;
     private final TestDataDao testDataDao;
 
@@ -33,22 +37,32 @@ public class DaoSession extends AbstractDaoSession {
             daoConfigMap) {
         super(db);
 
+        allParameterDaoConfig = daoConfigMap.get(AllParameterDao.class).clone();
+        allParameterDaoConfig.initIdentityScope(type);
+
         daysDataDaoConfig = daoConfigMap.get(DaysDataDao.class).clone();
         daysDataDaoConfig.initIdentityScope(type);
 
         testDataDaoConfig = daoConfigMap.get(TestDataDao.class).clone();
         testDataDaoConfig.initIdentityScope(type);
 
+        allParameterDao = new AllParameterDao(allParameterDaoConfig, this);
         daysDataDao = new DaysDataDao(daysDataDaoConfig, this);
         testDataDao = new TestDataDao(testDataDaoConfig, this);
 
+        registerDao(AllParameter.class, allParameterDao);
         registerDao(DaysData.class, daysDataDao);
         registerDao(TestData.class, testDataDao);
     }
     
     public void clear() {
+        allParameterDaoConfig.clearIdentityScope();
         daysDataDaoConfig.clearIdentityScope();
         testDataDaoConfig.clearIdentityScope();
+    }
+
+    public AllParameterDao getAllParameterDao() {
+        return allParameterDao;
     }
 
     public DaysDataDao getDaysDataDao() {

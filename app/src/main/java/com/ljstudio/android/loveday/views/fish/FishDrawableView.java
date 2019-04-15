@@ -11,7 +11,7 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.PointF;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;

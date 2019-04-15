@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="3dp">
+
+    <ImageView
+        android:id="@+id/id_notify_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@null"
+        android:src="@mipmap/ic_launcher" />
+
+    <LinearLayout
+        android:id="@+id/id_notify_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="2dp">
+
+        <TextView
+            android:id="@+id/id_notify_msg_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:text="下载文件名称" />
+
+        <RelativeLayout
+            android:id="@+id/id_notify_msg_ing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp">
+
+            <TextView
+                android:id="@+id/id_notify_msg_ing_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正在下载..."
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/id_notify_msg_ing_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="3dp"
+                android:text="(100%) 15.23M"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/id_notify_msg_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp" />
+    </LinearLayout>
+
+</LinearLayout>

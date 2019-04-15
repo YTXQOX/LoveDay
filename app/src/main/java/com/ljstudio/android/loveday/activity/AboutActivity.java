@@ -3,9 +3,9 @@ package com.ljstudio.android.loveday.activity;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,7 +13,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ljstudio.android.loveday.R;
-import com.ljstudio.android.loveday.utils.ToastUtil;
+import com.ljstudio.android.loveday.constants.Constant;
+import com.ljstudio.android.loveday.utils.NetworkUtil;
+import com.ljstudio.android.loveday.utils.UpdateHelperUtil;
 import com.ljstudio.android.loveday.utils.VersionUtil;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
@@ -65,12 +67,10 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void checkUpdate() {
-        ToastUtil.toastShortCenter(AboutActivity.this,"当前版本已是最新");
-//        if (NetworkUtil.checkNetworkOnly(AboutActivity.this)) {
-//            UpdateHelperUtil.getInstance(AboutActivity.this).check4UpdateLeanCloud(AboutActivity.this, true, Constant.DB_UPDATE, true);
-//        }
+        if (NetworkUtil.checkNetworkOnly(AboutActivity.this)) {
+            UpdateHelperUtil.getInstance(AboutActivity.this).check4UpdateLeanCloud(AboutActivity.this, true, Constant.DB_UPDATE, true);
+        }
     }
-
 
     @Override
     protected void onResume() {

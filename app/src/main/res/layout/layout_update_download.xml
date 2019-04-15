@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="正在下载"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/id_update_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="完成进度：（1/1000）"
+        android:textSize="16sp" />
+
+    <com.daimajia.numberprogressbar.NumberProgressBar
+        android:id="@+id/id_update_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        custom:progress_reached_bar_height="16dp"
+        custom:progress_reached_color="#1196EE"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="36dp"
+        custom:progress_unreached_bar_height="15.5dp" />
+
+</LinearLayout>

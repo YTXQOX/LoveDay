@@ -26,7 +26,7 @@ public class DaysData {
 
     @Generated(hash = 136757265)
     public DaysData(Long id, @NotNull String title, String date, String days,
-                    String unit, boolean isTop) {
+            String unit, boolean isTop) {
         this.id = id;
         this.title = title;
         this.date = date;
@@ -98,4 +98,5 @@ public class DaysData {
                 ", isTop=" + isTop +
                 '}';
     }
+
 }

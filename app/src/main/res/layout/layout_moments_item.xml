@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp">
+
+    <ImageView
+        android:id="@+id/id_moments_item_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:layout_margin="4dp"
+        android:contentDescription="@null"
+        android:src="@mipmap/google_calendar_01" />
+
+    <TextView
+        android:id="@+id/id_moments_item_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxEms="41"
+        android:text="这是一个内容，这是一个内容这是一个内容这是一个内容这是一个内容，容这是一个内容这是一个内容。这是一个内容这。"
+        android:textColor="@color/colorBlack"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.ljstudio.android.loveday.views.like.LikeNumView
+            android:id="@+id/id_moments_item_like_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+
+        <com.ljstudio.android.loveday.views.like.LikeView
+            android:id="@+id/id_moments_item_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/id_moments_item_like_num"
+            app:cirRadius="10dp"
+            app:cycleTime="500"
+            app:defaultColor="#ff657487" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/id_moments_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="name"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/id_moments_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/id_moments_item_name"
+                android:layout_alignParentStart="@id/id_moments_item_name"
+                android:text="2018-11-14 00:00"
+                android:textSize="12sp"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>
+
+
+

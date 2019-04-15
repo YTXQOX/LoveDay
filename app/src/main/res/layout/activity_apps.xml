@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_apps_toolbar"
         android:layout_width="match_parent"
         style="@style/NoSpaceActionBarTheme"
@@ -22,7 +22,7 @@
         app:loadingText="@string/loading"
         android:visibility="gone" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/id_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
