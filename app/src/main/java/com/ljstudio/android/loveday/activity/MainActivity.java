@@ -287,16 +287,16 @@ public class MainActivity extends AppCompatActivity {
         FontsManager.initFormAssets(this, "fonts/gtw.ttf");
         FontsManager.changeFonts(this);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    getTxtContent();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    getTxtContent();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
     }
 
     public void getTxtContent() throws Exception {
@@ -687,7 +687,29 @@ public class MainActivity extends AppCompatActivity {
                 SystemOutUtil.sysOut("listDays.size()-->" + listDays.size());
                 onCloudExport();
             } else if (id == R.id.id_action_output) {
-                onExport();
+                AndPermission.with(MainActivity.this)
+                        .runtime()
+                        .permission(Permission.Group.STORAGE)
+                        .onGranted(permissions -> {
+                            onExport();
+                        })
+                        .onDenied(permissions -> {
+                            // Storage permission are not allowed.
+                            new MaterialDialog.Builder(MainActivity.this)
+                                    .title("权限设置")
+                                    .negativeText("取消")
+                                    .positiveText("去设置")
+                                    .content("本地备份需要开启读写权限(READ_EXTERNAL_STORAGE 及 WRITE_EXTERNAL_STORAGE)以便存储备份")
+                                    .onPositive((dialog, which) -> {
+                                        getAppDetailSettingIntent(MainActivity.this);
+                                        dialog.dismiss();
+                                    })
+                                    .onNegative((dialog, which) -> {
+                                        dialog.dismiss();
+                                    })
+                                    .show();
+                        })
+                        .start();
             } else if (id == R.id.id_action_recovery) {
                 File filePath = getSDCardFolderPath("Export");
                 if (!filePath.exists()) {

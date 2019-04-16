@@ -198,7 +198,7 @@ public class EditActivity extends AppCompatActivity implements DatePickerDialog.
             }
         });
 
-        readAll4DB();
+//        readAll4DB();
     }
 
     private List<AllParameter> readAll4DB() {
