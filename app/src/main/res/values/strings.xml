@@ -2,4 +2,21 @@
     <string name="app_name">LoveDay</string>
 
     <string name="easter_egg_content">LoveDay. Record Time, Record Beauty\n\n </string>
+
+    <string name="menu_add">add</string>
+    <string name="menu_output">output</string>
+    <string name="menu_recovery">recovery</string>
+    <string name="menu_setting">setting</string>
+    <string name="apps">Apps</string>
+    <string name="menu_show_sys_app">Show Sys Apps</string>
+    <string name="menu_hidden_sys_app">Hidden Sys Apps</string>
+    <string name="loading">Loading...</string>
+    <string name="input">Input</string>
+    <string name="show">Show</string>
+    <string name="choose_color">Choose color</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="hint">「天喜至鱼」科技（厦门分公司）</string>
+
 </resources>

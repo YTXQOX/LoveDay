@@ -33,6 +33,37 @@
             app:textSize="12sp" />
 
         <LinearLayout
+            android:id="@+id/id_main_top_days_unit_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:paddingEnd="16dp">
+
+            <!--<com.ljstudio.android.loveday.views.scrollnumber.MultiScrollNumber-->
+            <TextView
+                android:id="@+id/id_main_top_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="520"
+                android:textColor="@color/colorAccent"
+                android:textSize="60dp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/id_main_top_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:text="Days"
+                android:textColor="@color/colorAccent"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -55,34 +86,6 @@
                 android:text="520"
                 android:textColor="@color/colorGrayLight"
                 android:textSize="12dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:paddingEnd="16dp">
-
-            <TextView
-                android:id="@+id/id_main_top_days"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="520"
-                android:textColor="@color/colorAccent"
-                android:textSize="60dp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/id_main_top_unit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="8dp"
-                android:text="Days"
-                android:textColor="@color/colorAccent"
-                android:textSize="16dp" />
         </LinearLayout>
 
     </RelativeLayout>

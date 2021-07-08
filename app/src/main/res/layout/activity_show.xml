@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/id_show_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorGrayLight">
+
+    <com.ljstudio.android.loveday.views.MarqueeView
+        android:id="@+id/id_show_content_marquee"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:marqueeview_repet_type="repet_continuous"
+        app:marqueeview_text_size="15"
+        app:marqueeview_text_speed="3" />
+
+</LinearLayout>

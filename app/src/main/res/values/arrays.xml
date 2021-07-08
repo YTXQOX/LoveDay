@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="font">
+        <item>gtw</item>
+        <item>Oswald-Stencbab</item>
+        <item>Roboto-Bold</item>
+        <item>Roboto-ThinItalic</item>
+        <item>RobotoCondensed-Regular</item>
+    </string-array>
+
+</resources>

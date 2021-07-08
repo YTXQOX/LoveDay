@@ -1,19 +1,20 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'kotlin-android'
 
-def releaseTime() {
+def static releaseTime() {
     return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.ljstudio.android.loveday"
-        minSdkVersion 19
-        targetSdkVersion 25
+        minSdkVersion 21
+        targetSdkVersion 27
         versionCode 62
         versionName rootProject.ext.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -25,6 +26,8 @@ android {
             keyAlias "loveday"
             storePassword "lj123456"
             keyPassword "lj123456789"
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
 
@@ -34,7 +37,9 @@ android {
 
             versionNameSuffix "-debug"
             minifyEnabled false
+//            shrinkResources true
             signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         release {
@@ -42,28 +47,48 @@ android {
 
 //            versionNameSuffix "-release"
             minifyEnabled false
+//            shrinkResources true
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         applicationVariants.all { variant ->
-            variant.outputs.each { output ->
+            variant.outputs.all { output ->
+//            variant.outputs.each { output ->
                 def outputFile = output.outputFile
                 if (outputFile != null && outputFile.name.endsWith('.apk')) {
                     //  apk名称为 LoveDay-V1.0.0_2015-12-31_online.apk
-                    def fileName = "LoveDay-V${versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
-                    output.outputFile = new File(outputFile.parent, fileName)
+                    def fileName = outputFile.name.replace("app", "LoveDay-V${versionName}_${releaseTime()}")
+//                    outputFileName = new File(outputFile.parent, fileName)
+                    outputFileName = new File(fileName)
+
+//                    def fileName = "LoveDay-V${versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+//                    output.outputFile = new File(outputFile.parent, fileName)
                 }
             }
         }
     }
 
+    // Specifies a flavor dimension.
+    flavorDimensions "channel"
+
     productFlavors {
+        apk {
+            manifestPlaceholders = [APK_CHANNEL: "apk"]
+
+            buildConfigField "String", "DOMAIN_ADD", "\"https://online.domain.com/\""
+            versionName getReleaseVersionName()
+
+            dimension "channel"
+        }
+
         online {
             manifestPlaceholders = [APK_CHANNEL: "online"]
 
             buildConfigField "String", "DOMAIN_ADD", "\"https://online.domain.com/\""
             versionName getReleaseVersionName()
+
+            dimension "channel"
         }
 
         admin {
@@ -71,6 +96,8 @@ android {
 
             buildConfigField "String", "DOMAIN_ADD", "\"https://admin.domain.com/\""
             versionName getDebugVersionName()
+
+            dimension "channel"
         }
 
         atest {
@@ -78,11 +105,18 @@ android {
 
             buildConfigField "String", "DOMAIN_ADD", "\"https://offline.domain.com/\""
             versionName getDebugVersionName()
+
+            dimension "channel"
         }
     }
 
     productFlavors.all {
         flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 
@@ -92,46 +126,74 @@ greendao {
     targetGenDir 'src/main/java'
 }
 
+ext {
+    supportlib_version = "27.1.0"
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion "$supportlib_version"
+            }
+        }
+    }
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation "com.android.support:appcompat-v7:$supportlib_version"
+    implementation "com.android.support:design:$supportlib_version"
 
-    compile 'com.jakewharton:butterknife:8.5.1'
+    implementation 'com.jakewharton:butterknife:8.6.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
-    compile 'org.greenrobot:greendao:3.2.2'
-
-    compile 'com.yqritc:recyclerview-flexibledivider:1.4.0'
-    compile 'com.readystatesoftware.systembartint:systembartint:1.0.4'
-
-    compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
-
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.google.code.gson:gson:2.8.0'
-
-    compile 'net.sourceforge.jexcelapi:jxl:2.6.12'  // https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl
-    compile 'com.tapadoo.android:alerter:1.0.4'
-
-    compile 'com.zhy:okhttputils:2.6.2'
-
-    compile 'com.github.bumptech.glide:glide:4.1.1'
+    implementation 'com.github.bumptech.glide:glide:4.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.1.1'
 
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
-    compile 'com.github.nekocode:TriangulationDrawable:1.1'
-    compile 'com.github.lzyzsd.randomcolor:library:1.0.0'
-    compile 'com.github.GrenderG:Toasty:1.2.3'
+    implementation 'org.greenrobot:greendao:3.2.2'
 
-    compile 'com.afollestad.material-dialogs:core:0.9.4.4'
-    compile 'com.afollestad.material-dialogs:commons:0.9.4.4'
+    implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
+    implementation 'com.readystatesoftware.systembartint:systembartint:1.0.4'
 
-    compile "io.reactivex.rxjava2:rxjava:2.0.7"
-    compile "io.reactivex.rxjava2:rxandroid:2.0.1"
+    implementation 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
+
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.google.code.gson:gson:2.8.1'
+
+    implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
+    // https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl
+    implementation 'com.tapadoo.android:alerter:1.0.4'
+    implementation 'com.yanzhikai:TextPathView:0.0.3'
+
+    implementation 'com.zhy:okhttputils:2.6.2'
+
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.15'
+    implementation 'com.github.nekocode:TriangulationDrawable:1.1'
+    implementation 'com.github.lzyzsd.randomcolor:library:1.0.0'
+    implementation 'com.github.GrenderG:Toasty:1.2.8'
+    implementation 'com.vdurmont:emoji-java:4.0.0'
+//    implementation 'com.github.385841539:MarqueeView:1.0.0'
+
+    implementation 'com.afollestad.material-dialogs:core:0.9.4.4'
+    implementation 'com.afollestad.material-dialogs:commons:0.9.4.4'
+
+    implementation "io.reactivex.rxjava2:rxjava:2.1.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+
+repositories {
+    mavenCentral()
+}
+
+
+

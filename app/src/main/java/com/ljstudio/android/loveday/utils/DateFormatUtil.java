@@ -28,6 +28,8 @@ public class DateFormatUtil {
 	public static final SimpleDateFormat sdfTime2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
 	public static final SimpleDateFormat sdfTime3 = new SimpleDateFormat("HH", Locale.getDefault());
 
+	public static final SimpleDateFormat sdfWeek = new SimpleDateFormat("EEEE", Locale.getDefault());
+
 
 	public static String getDate(Date date, SimpleDateFormat sdf) {
 		String strCurrentDate = sdf.format(date);
@@ -47,6 +49,12 @@ public class DateFormatUtil {
 	}
 
 	public static String getCurrentDate(SimpleDateFormat sdf) {
+		String strCurrentDate;
+		strCurrentDate = sdf.format(new Date());
+		return strCurrentDate;
+	}
+
+	public static String getCurrentWeek(SimpleDateFormat sdf) {
 		String strCurrentDate;
 		strCurrentDate = sdf.format(new Date());
 		return strCurrentDate;

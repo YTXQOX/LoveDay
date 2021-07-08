@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/id_splash_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,8 +10,41 @@
     <ImageView
         android:id="@+id/id_splash_bg"
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/id_splash_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:alpha="0.7"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/id_splash_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="90dp"
+        android:alpha="0.7"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp" />
+
+    <yanzhikai.textpath.SyncTextPathView
+        android:id="@+id/id_splash_hint"
+        app:duration="3000"
+        app:showPainter="true"
+        app:text="努力"
+        app:paintStrokeColor="@color/colorBlue"
+        app:textStrokeColor="@color/colorWhite"
+        app:textInCenter="true"
+        app:textSize="32sp"
+        android:layout_marginTop="120dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <com.ljstudio.android.loveday.views.particletextview.view.ParticleTextView
         android:id="@+id/id_splash_particle_text_view"

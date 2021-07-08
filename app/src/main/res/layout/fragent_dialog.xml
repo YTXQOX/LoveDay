@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp">
+
+    <TextView
+        android:id="@+id/id_dialog_color_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorGrayLighter"
+        android:gravity="center"
+        android:text="@string/choose_color"
+        android:textSize="20sp" />
+
+    <View
+        android:id="@+id/id_dialog_color_show"
+        android:layout_width="112dp"
+        android:layout_height="56dp"
+        android:layout_below="@id/id_dialog_color_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorPrimary" />
+
+    <com.ljstudio.android.loveday.views.ColorPickView
+        android:id="@+id/id_dialog_color_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/id_dialog_color_show"
+        android:padding="8dp"
+        android:layout_marginTop="16dp" />
+
+    <LinearLayout
+        android:id="@+id/id_dialog_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/id_dialog_color_view"
+        android:layout_marginTop="24dp"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:id="@+id/id_dialog_layout_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/colorGrayLighter"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="@string/cancel"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/id_dialog_layout_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="0.2dp"
+            android:layout_weight="1"
+            android:background="@color/colorGrayLighter"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="@string/confirm"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</RelativeLayout>

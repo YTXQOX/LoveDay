@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ljstudio.android.loveday.R;
@@ -26,6 +27,7 @@ import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
+import yanzhikai.textpath.SyncTextPathView;
 
 import static com.ljstudio.android.loveday.utils.FileUtil.getSDCardFolderPath;
 
@@ -40,10 +42,16 @@ public class SplashActivity extends AppCompatActivity {
     ParticleTextView particleTextView;
     @BindView(R.id.id_fish_drawable_view)
     FishDrawableView fishDrawableView;
-    @BindView((R.id.id_splash_layout))
+    @BindView(R.id.id_splash_layout)
     RelativeLayout bgLayout;
-    @BindView((R.id.id_splash_bg))
+    @BindView(R.id.id_splash_bg)
     ImageView bgImage;
+    @BindView(R.id.id_splash_date)
+    TextView tvDate;
+    @BindView(R.id.id_splash_week)
+    TextView tvWeek;
+    @BindView(R.id.id_splash_hint)
+    SyncTextPathView tvHint;
 
 
     @Override
@@ -56,6 +64,12 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         ButterKnife.bind(this);
+
+        tvDate.setText(DateFormatUtil.getCurrentDate(DateFormatUtil.sdfDate4));
+        tvWeek.setText(DateFormatUtil.getCurrentWeek(DateFormatUtil.sdfWeek));
+
+        tvHint.setText("努力，奋斗");
+        tvHint.startAnimation(0, 1);
 
         fishDrawableView.setOnAnimationFinishedListener(new FishDrawableView.OnAnimationFinishedListener() {
             @Override

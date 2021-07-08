@@ -9,6 +9,7 @@
     <color name="colorGrayLighter">#eaeaea</color>
 
     <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
 
     <color name="colorRed">#e12525</color>
 
@@ -17,6 +18,13 @@
 
     <color name="colorGreen">#10cc13</color>
     <color name="colorGreenDark">#0ca30e</color>
+
+    <color name="triangle">#bb40ed40</color>
+    <color name="circle">#bb335af2</color>
+    <color name="rect">#bbe23828</color>
+    <color name="view_bg">#00000000</color>
+    <color name="shadow">#25808080</color>
+    <color name="dialog_bg">#f5f5f5</color>
 
     <color name="test">#bbfbfbfb</color>
 

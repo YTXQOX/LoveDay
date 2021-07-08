@@ -2,4 +2,20 @@
     <string name="app_name">时光机</string>
 
     <string name="easter_egg_content">我是时光机，又叫倒数日，也叫恋时光，记录时光，记录美\n\n </string>
+
+    <string name="menu_add">新增</string>
+    <string name="menu_output">本地备份</string>
+    <string name="menu_recovery">恢复记录</string>
+    <string name="menu_setting">设置</string>
+    <string name="apps">应用程序</string>
+    <string name="menu_show_sys_app">显示系统应用</string>
+    <string name="menu_hidden_sys_app">隐藏系统应用</string>
+    <string name="loading">加载中...</string>
+    <string name="input">输入</string>
+    <string name="show">展示</string>
+    <string name="choose_color">选择颜色</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="hint">「天喜至鱼」科技（厦门分公司）</string>
+
 </resources>

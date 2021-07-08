@@ -16,6 +16,12 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary" />
 
+    <com.ljstudio.android.loveday.views.SprayView
+        android:id="@+id/id_detail_spray_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/id_detail_toolbar" />
+
     <com.ljstudio.android.loveday.views.fallingview.FallingView
         android:id="@+id/id_detail_falling_view"
         android:layout_width="match_parent"
@@ -23,6 +29,7 @@
         android:layout_centerInParent="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:alpha="0.9"
         app:fallingDelay="20"
         app:flakeDensity="30"
         app:flakeSrc="@mipmap/ic_winter_snow">

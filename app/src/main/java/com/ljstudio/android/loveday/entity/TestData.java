@@ -1,8 +1,9 @@
 package com.ljstudio.android.loveday.entity;
 
+
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * Created by guoren on 2017/8/2 09:09
@@ -22,6 +23,7 @@ public class TestData {
     private String father_node;
     private String recommend;
 
+
     @Generated(hash = 809661315)
     public TestData(Long id, String list_name, String value, String name,
             String fid, String father_node, String recommend) {
@@ -37,6 +39,7 @@ public class TestData {
     @Generated(hash = 1580692206)
     public TestData() {
     }
+
 
     public Long getId() {
         return id;
@@ -86,28 +89,11 @@ public class TestData {
         this.father_node = father_node;
     }
 
-    public String isRecommend() {
+    public String getRecommend() {
         return recommend;
     }
 
     public void setRecommend(String recommend) {
         this.recommend = recommend;
-    }
-
-    public String getRecommend() {
-        return this.recommend;
-    }
-
-    @Override
-    public String toString() {
-        return "TestData{" +
-                "id=" + id +
-                ", list_name='" + list_name + '\'' +
-                ", value='" + value + '\'' +
-                ", name='" + name + '\'' +
-                ", fid='" + fid + '\'' +
-                ", father_node='" + father_node + '\'' +
-                ", recommend='" + recommend + '\'' +
-                '}';
     }
 }
